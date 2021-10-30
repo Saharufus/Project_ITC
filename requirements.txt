@@ -1,3 +1,6 @@
-Requirements: Install with "pip install":
+Requirements:
+Python version: 3.10
+
+Install with "pip install":
 beautifullsoup4 --- V: 4.10.0
 selenium --- V: 4.0.0
