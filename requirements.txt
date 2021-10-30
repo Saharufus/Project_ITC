@@ -4,3 +4,7 @@ Python version: 3.10
 Install with "pip install":
 beautifullsoup4 --- V: 4.10.0
 selenium --- V: 4.0.0
+
+Additionally:
+add chromedriver to path on windows.
+url chromedriver: https://chromedriver.storage.googleapis.com/index.html?path=95.0.4638.54/
