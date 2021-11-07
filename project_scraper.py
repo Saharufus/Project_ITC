@@ -81,4 +81,9 @@ def food_scraper(file_name, city, first_page=1, last_page=2):
     data.to_csv(file_name + '.csv')
 
 
-food_scraper('rest_TLV', 'Tel-Aviv', 1, 3)
+# def main():
+
+
+
+
+food_scraper('rest_TLV', 'Tel-Aviv', 1, 5)
