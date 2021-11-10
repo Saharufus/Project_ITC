@@ -7,6 +7,7 @@ from next_page import next_page
 
 
 def scrape_from_tripadvisor(city_name, file_name):
+    """Scrapes Tripadvisor restaurants in a given city and saves the data to file_name.csv"""
     main_url = omers_function(city_name)  # a string of a url for the city page
     main_driver = webdriver.Chrome()
 
