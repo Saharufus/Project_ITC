@@ -2,26 +2,20 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 import pandas as pd
 from time import sleep
-
-REVIEWS = 0
-SIZE_OF_REVIEW = 3
-TYPE_OF_REST = 0
-PRICE = 1
-PAGE_START = 'https://www.tripadvisor.com/Restaurants-g'
-CITY_DICT = {'Tel-Aviv': 293984}
+import config
 
 
 def what_is_in(type_or_price):
     """Gets the type and price of a restaurant"""
     if len(type_or_price) == 2:
-        type_of_rest = type_or_price[TYPE_OF_REST].text
-        price_of_rest = type_or_price[PRICE].text
+        type_of_rest = type_or_price[config.TYPE_OF_REST].text
+        price_of_rest = type_or_price[config.PRICE].text
     elif len(type_or_price) == 1:
-        if '$' in type_or_price[TYPE_OF_REST].text:
+        if '$' in type_or_price[config.TYPE_OF_REST].text:
             type_of_rest = None
-            price_of_rest = type_or_price[TYPE_OF_REST].text
+            price_of_rest = type_or_price[config.TYPE_OF_REST].text
         else:
-            type_of_rest = type_or_price[TYPE_OF_REST].text
+            type_of_rest = type_or_price[config.TYPE_OF_REST].text
             price_of_rest = None
     else:
         type_of_rest = None
@@ -31,7 +25,7 @@ def what_is_in(type_or_price):
 
 def choose_city_and_page(city_name, page_number):
     """Returns the url of Tripadvisor restaurants with the city and page chosen"""
-    return PAGE_START + str(CITY_DICT[city_name]) + f'-oa{30*(page_number-1)}'
+    return config.PAGE_START + str(config.CITY_DICT[city_name]) + f'-oa{30*(page_number-1)}'
 
 
 def food_scraper(file_name, city, first_page=1, last_page=2):
@@ -62,8 +56,8 @@ def food_scraper(file_name, city, first_page=1, last_page=2):
             rest_name = restaurant.find('a', class_='bHGqj Cj b').text
             if rest_name[0].isdigit():  # get rid of the sponsored
                 avg_review_text = restaurant.find('svg', class_='RWYkj d H0')
-                avg_review = float(avg_review_text.get('title')[:SIZE_OF_REVIEW])
-                num_of_reviews = restaurant.find('span', class_='NoCoR').text.split()[REVIEWS]
+                avg_review = float(avg_review_text.get('title')[:config.SIZE_OF_REVIEW])
+                num_of_reviews = restaurant.find('span', class_='NoCoR').text.split()[config.REVIEWS]
                 reviews_type_price = restaurant.find('div', class_='bhDlF bPJHV eQXRG').find_all('span', class_='XNMDG')
                 food_type, price = what_is_in(reviews_type_price)
 
@@ -83,7 +77,4 @@ def food_scraper(file_name, city, first_page=1, last_page=2):
 
 # def main():
 
-
-
-
-food_scraper('rest_TLV', 'Tel-Aviv', 1, 5)
+food_scraper('rest_TLV', 'Tel-Aviv', 1, 2)
