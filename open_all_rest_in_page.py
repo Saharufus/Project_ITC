@@ -8,10 +8,11 @@ def get_rest_html(url, empty_list):
     :param url: url of webpage
     :param empty_list: A soup object from the url page will be appended to the empty list
     """
-    driver = webdriver.Chrome()
-    driver.get(url)
-    soup = BeautifulSoup(driver.page_source, 'html.parser')
-    driver.close()
+    soup = get_soup_from_url(url)
+    # driver = webdriver.Chrome()
+    # driver.get(url)
+    # soup = BeautifulSoup(driver.page_source, 'html.parser')
+    # driver.close()
     empty_list.append(soup)
 
 

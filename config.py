@@ -4,3 +4,6 @@ TYPE_OF_REST = 0
 PRICE = 1
 PAGE_START = 'https://www.tripadvisor.com/Restaurants-g'
 CITY_DICT = {'Tel-Aviv': 293984}
+
+START_PAGE = 1
+END_PAGE = 30
