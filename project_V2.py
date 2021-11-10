@@ -4,6 +4,7 @@ import config
 from open_all_rest_in_page import get_list_of_soups
 import pandas as pd
 from next_page import next_page
+from get_rest_url_list import get_rest_url_list
 
 
 def scrape_from_tripadvisor(city_name, file_name):
@@ -16,7 +17,7 @@ def scrape_from_tripadvisor(city_name, file_name):
         main_driver.get(main_url)
         main_soup = BeautifulSoup(main_driver.page_source, 'html.parser')
 
-        list_of_restaurants_urls = bars_function_to_get_list_of_30_urls(main_soup)
+        list_of_restaurants_urls = get_rest_url_list(main_soup)
         restaurant_soup_list = []
         get_list_of_soups(list_of_restaurants_urls, restaurant_soup_list)
         list_of_dicts.extend(bars_function_to_get_list_of_dicts(restaurant_soup_list))

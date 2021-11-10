@@ -1,6 +1,6 @@
-from selenium import webdriver
-from bs4 import BeautifulSoup
 import threading
+from get_soup_from_url import get_soup_from_url
+import config
 
 
 def get_rest_html(url, empty_list):
@@ -22,9 +22,10 @@ def get_list_of_soups(url_list, empty_list):
     :param empty_list: The list will be filled with soups of the urls from url_list
     """
     thread_list = [threading.Thread(target=get_rest_html, args=(url, empty_list)) for url in url_list]
+    divider = int(len(thread_list)/config.MULTITHREAD)
+    for i in range(config.MULTITHREAD):
+        for thread in thread_list[i*divider:(i+1)*divider]:
+            thread.start()
 
-    for thread in thread_list:
-        thread.start()
-
-    for thread in thread_list:
-        thread.join()
+        for thread in thread_list[i*divider:(i+1)*divider]:
+            thread.join()

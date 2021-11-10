@@ -7,3 +7,5 @@ CITY_DICT = {'Tel-Aviv': 293984}
 
 START_PAGE = 1
 END_PAGE = 30
+MAIN_PAGE = 'https://www.tripadvisor.com/'
+MULTITHREAD = 6
