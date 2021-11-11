@@ -20,23 +20,43 @@ def get_rest_details(soups):
     rest_list = []
 
     for soup in soups:
-        rest_dict = {}
+        try:
+            name = (soup.find('div', class_="eTnlN _W w O")).find('h1', class_="fHibz").text
+            rating = float(soup.find('span', class_="fdsdx").text.strip('"'))
+            reviews_num = int(re.sub("[^0-9]", "", soup.find('a', class_="dUfZJ").text))
+        except AttributeError:
+            name = None
+            rating = None
+            reviews_num = None
+        try:
+            details = soup.find('span', class_="dyeJW VRlVV").find_all('a', class_="drUyy")
+            details_list = [det.text for det in details]
+            price_rate = details_list[PRICING_RATE]
+            cuisine = details_list[CUISINE]
+        except AttributeError:
+            price_rate = None
+            cuisine = None
 
-        name = (soup.find('div', class_="eTnlN _W w O")).find('h1', class_="fHibz").text
-        rating = float(soup.find('span', class_="fdsdx").text.strip('"'))
-        reviews_num = int(re.sub("[^0-9]", "", soup.find('a', class_="dUfZJ").text))
-
-        details = soup.find('span', class_="dyeJW VRlVV").find_all('a', class_="drUyy")
-        details_list = [det.text for det in details]
-        price_rate = details_list[PRICING_RATE]
-        cuisine = details_list[CUISINE]
-
-        city_rate = soup.find('div', class_="fYCpi").text.split()[CITY_RATE][REMOVE_HASH:]
-        address = soup.find('span', class_="brMTW").text
-        website = soup.find('div', class_="bKBJS Me enBrh").find('a').get("href")
-        phone = soup.find('div', class_="bKBJS Me").find('a').get("href").strip('tel:')
-
-        rest_dict.update({"Name": name,
+        try:
+            city_rate = soup.find('div', class_="fYCpi").text.split()[CITY_RATE][REMOVE_HASH:]
+        except AttributeError:
+            city_rate = None
+        try:
+            address = soup.find('span', class_="brMTW").text
+        except AttributeError:
+            address = None
+        try:
+            website = soup.find('div', class_="bKBJS Me enBrh").find('a').get("href")
+        except AttributeError:
+            website = None
+        try:
+            phone = soup.find('div', class_="bKBJS Me").find('a').get("href").strip('tel:')
+        except AttributeError:
+            phone = None
+        if not name:
+            pass
+        else:
+            rest_dict = ({"Name": name,
                           "Rating": rating,
                           "Reviews_num": reviews_num,
                           "Price_rate": price_rate,
@@ -47,6 +67,6 @@ def get_rest_details(soups):
                           "Phone": phone
                           })
 
-        rest_list.append(rest_dict)
+            rest_list.append(rest_dict)
 
     return rest_list

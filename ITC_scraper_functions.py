@@ -6,3 +6,4 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 import config
 import pandas as pd
+from detailed_page_mining import get_rest_details

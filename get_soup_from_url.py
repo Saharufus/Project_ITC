@@ -9,9 +9,15 @@ def get_soup_from_url(url):
     :return: soup - html text (html.parser)
     """
     driver = webdriver.Chrome()
-    driver.get(url)
-    soup = BeautifulSoup(driver.page_source, 'html.parser')
-    driver.close()
+    driver.set_page_load_timeout(30)
+    try:
+        driver.get(url)
+        soup = BeautifulSoup(driver.page_source, 'html.parser')
+    except Exception:
+        print('Sites could be reached')
+        soup = None
+    finally:
+        driver.close()
 
     return soup
 

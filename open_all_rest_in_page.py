@@ -8,15 +8,12 @@ def get_rest_html(url, empty_list):
     :param empty_list: A soup object from the url page will be appended to the empty list
     """
     soup = get_soup_from_url(url)
-    # driver = webdriver.Chrome()
-    # driver.get(url)
-    # soup = BeautifulSoup(driver.page_source, 'html.parser')
-    # driver.close()
     empty_list.append(soup)
 
 
 def get_list_of_soups(url_list, empty_list, thread_number):
     """
+    :param thread_number: The number of threads that are going to be used simultaneously
     :param url_list: A list of urls to extract soups from
     :param empty_list: The list will be filled with soups of the urls from url_list
     """
