@@ -1,15 +1,9 @@
-from bs4 import BeautifulSoup
-from selenium import webdriver
-import config
-from open_all_rest_in_page import get_list_of_soups
-import pandas as pd
-from next_page import next_page
-from get_rest_url_list import get_rest_url_list
+from ITC_scraper_functions import *
 
 
 def scrape_from_tripadvisor(city_name, file_name):
     """Scrapes Tripadvisor restaurants in a given city and saves the data to file_name.csv"""
-    main_url = omers_function(city_name)  # a string of a url for the city page
+    main_url = get_city_rest_url(city_name)  # a string of a url for the city page
     main_driver = webdriver.Chrome()
 
     list_of_dicts = []
