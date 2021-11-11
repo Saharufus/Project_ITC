@@ -1,6 +1,5 @@
 import threading
 from get_soup_from_url import get_soup_from_url
-import config
 
 
 def get_rest_html(url, empty_list):
@@ -16,16 +15,30 @@ def get_rest_html(url, empty_list):
     empty_list.append(soup)
 
 
-def get_list_of_soups(url_list, empty_list):
+def get_list_of_soups(url_list, empty_list, thread_number):
     """
     :param url_list: A list of urls to extract soups from
     :param empty_list: The list will be filled with soups of the urls from url_list
     """
     thread_list = [threading.Thread(target=get_rest_html, args=(url, empty_list)) for url in url_list]
-    divider = int(len(thread_list)/config.MULTITHREAD)
-    for i in range(config.MULTITHREAD):
-        for thread in thread_list[i*divider:(i+1)*divider]:
+    for i in range(thread_number):
+        for thread in thread_list[i*thread_number:(i+1)*thread_number]:
             thread.start()
 
-        for thread in thread_list[i*divider:(i+1)*divider]:
+        for thread in thread_list[i*thread_number:(i+1)*thread_number]:
             thread.join()
+
+
+def main():
+    """asserts the functions"""
+    soup_list = []
+    url_list = ['https://www.tripadvisor.com/Restaurants-g293984-Tel_Aviv_Tel_Aviv_District.html',
+                'https://www.tripadvisor.com/Restaurants-g60878-Seattle_Washington.html']
+    get_list_of_soups(url_list, soup_list, 2)
+    assert len(soup_list) == len(url_list)
+    get_rest_html('https://www.tripadvisor.com/Restaurants-g293984-Tel_Aviv_Tel_Aviv_District.html', soup_list)
+    assert len(soup_list) == len(url_list) + 1
+
+
+if __name__ == '__main__':
+    main()

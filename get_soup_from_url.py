@@ -14,3 +14,18 @@ def get_soup_from_url(url):
     driver.close()
 
     return soup
+
+
+def main():
+    driver = webdriver.Chrome()
+    driver.get('https://www.tripadvisor.com/Restaurants-g293984-Tel_Aviv_Tel_Aviv_District.html')
+    soup = BeautifulSoup(driver.page_source, 'html.parser')
+    driver.close()
+
+    soup1 = get_soup_from_url('https://www.tripadvisor.com/Restaurants-g293984-Tel_Aviv_Tel_Aviv_District.html')
+
+    assert type(soup1) == type(soup)
+
+
+if __name__ == '__main__':
+    main()

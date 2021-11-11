@@ -19,7 +19,7 @@ def scrape_from_tripadvisor(city_name, file_name):
 
         list_of_restaurants_urls = get_rest_url_list(main_soup)
         restaurant_soup_list = []
-        get_list_of_soups(list_of_restaurants_urls, restaurant_soup_list)
+        get_list_of_soups(list_of_restaurants_urls, restaurant_soup_list, 5)
         list_of_dicts.extend(bars_function_to_get_list_of_dicts(restaurant_soup_list))
 
         main_url = next_page(main_soup)
