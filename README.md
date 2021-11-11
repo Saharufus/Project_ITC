@@ -16,9 +16,12 @@ The variables of ```food_scraper``` are as follows:
 * <span style="color: red">last_page</span> - The page to finish the scrape
 
 Fields that will be in the csv:
-* <span style="color: red">id</span> - The id of the restaurant
 * <span style="color: red">Restaurant name</span>
-* <span style="color: red">Review</span> - Average review of the restaurant (0-5)
+* <span style="color: red">Rating</span> - Average review of the restaurant (0-5)
 * <span style="color: red">Number of reviews</span>
-* <span style="color: red">Restaurant type</span> - What kind of food the restaurant serves
-* <span style="color: red">Price</span> - for now it is written $ - $$$$
+* <span style="color: red">Price</span> - for now it is written in format of $ - $$$$
+* <span style="color: red">Restaurant type (Cuisine)</span> - What kind of food the restaurant serves
+* <span style="color: red">City rate/span> - The rank of the restaurant among all the other restaurants in the city
+* <span style="color: red">Address</span> 
+* <span style="color: red">Website</span> 
+* <span style="color: red">Phone number</span> 
