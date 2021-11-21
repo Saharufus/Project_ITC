@@ -1,17 +1,16 @@
-from selenium import webdriver
 from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup
 import time
 import config
 
 
-def get_city_rest_url(city_name):
+def get_city_rest_url(city_name, driver):
     """
     Function returns city url in tripadvisor based on inpur city_name
     :param city_name: string - city name
+    :param driver: A main driver to work on
     :return: string - url in for restaurants page of the city in tripadvisor
     """
-    driver = webdriver.Chrome()
     driver.get(config.WEBSITE_REST_URL)
     search = driver.find_elements(By.CSS_SELECTOR, "input.fhEMT._G.B-.z._J.Cj.R0")
     search[1].click()
@@ -25,4 +24,4 @@ def get_city_rest_url(city_name):
 
 
 if __name__ == '__main__':
-    print(get_city_rest_url('amsterdam'))
+    print(get_city_rest_url('amsterdam', driver))
