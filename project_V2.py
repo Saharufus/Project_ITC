@@ -24,7 +24,7 @@ def scrape_from_tripadvisor(city_name, file_name, pages, main_driver, threads=5)
 def scrape_list_of_cities(list_of_cities, list_of_file_names, pages, threads=5):
     options = Options()
     options.add_argument('--headless')
-    main_driver = webdriver.Chrome(chrome_options=options)
+    main_driver = webdriver.Chrome(options=options)
     for city, file in zip(list_of_cities, list_of_file_names):
         scrape_from_tripadvisor(city, file, pages, main_driver, threads)
     main_driver.quit()
