@@ -18,7 +18,7 @@ def get_list_of_soups(url_list, empty_list, thread_number):
     :param empty_list: The list will be filled with soups of the urls from url_list
     """
     thread_list = [threading.Thread(target=get_rest_html, args=(url, empty_list)) for url in url_list]
-    for i in range(thread_number):
+    for i in range(int(len(thread_list)/thread_number)):
         for thread in thread_list[i*thread_number:(i+1)*thread_number]:
             thread.start()
 

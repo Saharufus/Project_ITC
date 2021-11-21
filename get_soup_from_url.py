@@ -14,7 +14,7 @@ def get_soup_from_url(url):
         driver.get(url)
         soup = BeautifulSoup(driver.page_source, 'html.parser')
     except Exception:
-        print('Sites could be reached')
+        print('Site could not be reached')
         soup = None
     finally:
         driver.close()
