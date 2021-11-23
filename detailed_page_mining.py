@@ -31,8 +31,18 @@ def get_rest_details(soups):
         try:
             details = soup.find('span', class_="dyeJW VRlVV").find_all('a', class_="drUyy")
             details_list = [det.text for det in details]
-            price_rate = details_list[PRICING_RATE]
-            cuisine = details_list[CUISINE]
+            if len(details_list) == 0:
+                price_rate = None
+                cuisine = None
+            elif '$' in details_list[PRICING_RATE]:
+                price_rate = details_list[PRICING_RATE]
+                if len(details_list) > 1:
+                    cuisine = details_list[1:]
+                else:
+                    cuisine = None
+            else:
+                price_rate = None
+                cuisine = details_list
         except AttributeError:
             price_rate = None
             cuisine = None

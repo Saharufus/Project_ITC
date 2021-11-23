@@ -6,7 +6,7 @@ import config
 
 def get_city_rest_url(city_name, driver):
     """
-    Function returns city url in tripadvisor based on inpur city_name
+    Function returns city url in tripadvisor based on input city_name
     :param city_name: string - city name
     :param driver: A main driver to work on
     :return: string - url in for restaurants page of the city in tripadvisor

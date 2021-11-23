@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
 from selenium.common.exceptions import WebDriverException
+from tqdm import tqdm
 
 
 def open_n_rest_tabs(url_short_list, driver, empty_list):
@@ -21,7 +22,7 @@ def open_n_rest_tabs(url_short_list, driver, empty_list):
             pass
 
 
-def get_list_of_soups_main_page_url_tabs(url_list, driver, empty_list, threads):
+def get_list_of_soups_main_page_url_tabs(url_list, driver, threads):
     """
     Fills a list with soups of restaurants from list of urls
     :param url_list: List of urls of 30 restaurants in main page
@@ -29,7 +30,10 @@ def get_list_of_soups_main_page_url_tabs(url_list, driver, empty_list, threads):
     :param empty_list: List to be filled with soups
     :param threads: Number of tabs to open simultaneously
     """
-    for i in range(int(len(url_list) / threads)):
-        open_n_rest_tabs(url_list[i*threads:(i+1)*threads], driver, empty_list)
+    soup_list = []
+    for i in tqdm(range(len(url_list) // threads)):
+        open_n_rest_tabs(url_list[i*threads:(i+1)*threads], driver, soup_list)
         driver.switch_to.window(driver.window_handles[0])
+
+    return soup_list
 
