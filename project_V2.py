@@ -27,10 +27,3 @@ def scrape_list_of_cities(list_of_cities, list_of_file_names, pages, threads=5):
     for city, file in zip(list_of_cities, list_of_file_names):
         scrape_from_tripadvisor(city, file, pages, main_driver, threads)
     main_driver.quit()
-
-
-if __name__ == '__main__':
-    scrape_list_of_cities(list_of_cities=['tel aviv', 'amsterdam'],
-                          list_of_file_names=['rest_tlv', 'rest_amst'],
-                          pages=3, threads=5)
-

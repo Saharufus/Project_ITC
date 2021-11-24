@@ -1,4 +1,5 @@
 import config
+DIGIT = 0
 
 
 def get_rest_url_list(main_soup):
@@ -13,10 +14,10 @@ def get_rest_url_list(main_soup):
 
     urls = []
     for restaurant in content:
-        rest_name = restaurant.find('a', class_='bHGqj Cj b').text
-        if rest_name[0].isdigit():  # get rid of the sponsored
-            title = restaurant.find('div', class_='OhCyu')
-            rest_url = title.find("a").get("href")
+        rest_soup = restaurant.find('a', class_='bHGqj Cj b')
+        rest_name = rest_soup.text
+        if rest_name[DIGIT].isdigit():  # get rid of the sponsored
+            rest_url = rest_soup.get("href")
             urls.append(config.MAIN_PAGE+rest_url)
 
     return urls
