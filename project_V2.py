@@ -11,8 +11,7 @@ def scrape_from_tripadvisor(city_name, file_name, pages, main_driver, threads=5)
         main_soup = BeautifulSoup(main_driver.page_source, 'html.parser')
 
         list_of_restaurants_urls = get_rest_url_list(main_soup)
-        restaurant_soup_list = []
-        get_list_of_soups_main_page_url_tabs(list_of_restaurants_urls, main_driver, restaurant_soup_list, threads)
+        restaurant_soup_list = get_list_of_soups_main_page_url_tabs(list_of_restaurants_urls, main_driver, threads)
         list_of_dicts.extend(get_rest_details(restaurant_soup_list))
 
         main_url = next_page(main_soup)
@@ -28,10 +27,3 @@ def scrape_list_of_cities(list_of_cities, list_of_file_names, pages, threads=5):
     for city, file in zip(list_of_cities, list_of_file_names):
         scrape_from_tripadvisor(city, file, pages, main_driver, threads)
     main_driver.quit()
-
-
-if __name__ == '__main__':
-    scrape_list_of_cities(list_of_cities=['tel aviv', 'amsterdam'],
-                          list_of_file_names=['rest_tlv', 'rest_amst'],
-                          pages=3, threads=5)
-

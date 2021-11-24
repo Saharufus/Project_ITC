@@ -5,6 +5,5 @@ from open_rest_in_tabs import get_list_of_soups_main_page_url_tabs
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-import config
 import pandas as pd
 from detailed_page_mining import get_rest_details
