@@ -37,5 +37,4 @@ def get_list_of_soups_main_page_url_tabs(url_list, driver, threads):
     for i in tqdm(range(len(url_list) // threads)):
         open_n_rest_tabs(url_list[i*threads:(i+1)*threads], driver, soup_list)
         driver.switch_to.window(driver.window_handles[MAIN_TAB])
-
     return soup_list
