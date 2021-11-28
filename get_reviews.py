@@ -21,5 +21,5 @@ def get_reviews_from_soup(soup):
         rating = comment.find('div', class_="ui_column is-9").find('span')
         review_dict['rating'] = int(int(rating['class'][1].split('_')[1]) / 10)
         reviews_list.append(review_dict)
-    return reviews_list
+    return pd.DataFrame(reviews_list)
 
