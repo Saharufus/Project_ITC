@@ -15,8 +15,9 @@ def scrape_from_tripadvisor(city_name, pages, main_driver, threads=5):
         list_of_dicts.extend(get_rest_details(restaurant_soup_list))
 
         main_url = next_page(main_soup)
-
-    return pd.DataFrame(list_of_dicts)
+    df = pd.DataFrame(list_of_dicts)
+    df["City"] = city_name.title()
+    return df
 
 
 def scrape_list_of_cities(list_of_cities, pages, threads=5):
@@ -27,4 +28,4 @@ def scrape_list_of_cities(list_of_cities, pages, threads=5):
     for city in list_of_cities:
         list_of_df.append(scrape_from_tripadvisor(city, pages, main_driver, threads))
     main_driver.quit()
-    return list_of_cities, list_of_df
+    return list_of_df
