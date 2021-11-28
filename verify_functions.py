@@ -26,7 +26,7 @@ def test_get_city_url_success():
     assert url_2 == "https://www.tripadvisor.com//Restaurants-g60763-New_York_City_New_York.html"
 
 
-def test_next_page():
+def test_next_page_success():
     # setup
     driver = setup_driver()
     driver.get(get_city_rest_url('tel aviv', driver))
@@ -39,7 +39,7 @@ def test_next_page():
         driver.get(url)
 
 
-def test_get_rest_url_list():
+def test_get_rest_url_list_success():
     # setup
     with open("test_html.html", 'r') as html:
         soup = BeautifulSoup(html, 'html.parser')
