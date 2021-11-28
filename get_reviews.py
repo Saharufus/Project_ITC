@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup
 import time
 import re
 from datetime import datetime
-
+NUM_TO_DIVIDE_RATING = 10
 def get_reviews_from_soup(soup):
     """
     @param soup: html text from tripadvisor website
@@ -19,7 +19,7 @@ def get_reviews_from_soup(soup):
         review_dict['date'] = datetime.strptime(date, '%B %d, %Y')
         review_dict['user_id'] = comment.find('div', class_="info_text pointer_cursor").text
         rating = comment.find('div', class_="ui_column is-9").find('span')
-        review_dict['rating'] = int(int(rating['class'][1].split('_')[1]) / 10)
+        review_dict['rating'] = int(int(rating['class'][1].split('_')[1]) / NUM_TO_DIVIDE_RATING)
         reviews_list.append(review_dict)
     return pd.DataFrame(reviews_list)
 
