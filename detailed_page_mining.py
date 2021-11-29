@@ -83,7 +83,7 @@ class RestaurantSoup:
         return phone
 
 
-def update_table_in_db(soup):
+def update_table_in_db(soup, city_name):
     """
     Gets a soup objet of a restaurant webpage from Tripadvisor and returns the details of the restaurant in a dictionary
     :param soup: soup object of restaurant webpage
@@ -94,13 +94,14 @@ def update_table_in_db(soup):
     if name:
         cuisine, price_rate = rest.get_cuisine_and_price()
         details = [name,
+                   city_name,
                    rest.get_rating(),
                    rest.get_reviews_num(),
                    price_rate,
                    rest.get_city_rate(),
                    rest.get_address(),
                    rest.get_website(),
-                   rest.get_phone()]
+                   rest.get_phone(),]
         rest_dict = dict(zip(config.RES_COLUMNS, details))
         res_table = TableUpdate(name='restaurants',
                                 data=rest_dict,
@@ -117,7 +118,7 @@ def update_table_in_db(soup):
         pass
 
 
-def update_30_db(soups):
+def update_30_db(soups, city_name):
     """
     The function accepts a list of soups (html text) of detailed restaurant pages
     and return a list of dictionaries. Each dictionary contains details on restaurant
@@ -129,4 +130,4 @@ def update_30_db(soups):
     Website(str, url to the restaurant website), Phone(str, restaurant phone-number)
     """
     for soup in soups:
-        update_table_in_db(soup)
+        update_table_in_db(soup, city_name)

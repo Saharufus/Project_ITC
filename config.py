@@ -3,6 +3,7 @@ import pymysql
 MAIN_PAGE = 'https://www.tripadvisor.com/'
 WEBSITE_REST_URL = "https://www.tripadvisor.com/Restaurants"
 RES_COLUMNS = ["Name",
+               "City",
                "Rating",
                "Reviews_num",
                "Price_rate",
