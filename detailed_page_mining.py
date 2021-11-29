@@ -101,7 +101,7 @@ def update_table_in_db(soup, city_name):
                    rest.get_city_rate(),
                    rest.get_address(),
                    rest.get_website(),
-                   rest.get_phone(),]
+                   rest.get_phone()]
         rest_dict = dict(zip(config.RES_COLUMNS, details))
         res_table = TableUpdate(name='restaurants',
                                 data=rest_dict,
