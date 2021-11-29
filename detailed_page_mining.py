@@ -1,4 +1,6 @@
 import re
+from update_db import TableUpdate
+import config
 
 PRICING_RATE = 0
 CUISINE = 1
@@ -81,7 +83,7 @@ class RestaurantSoup:
         return phone
 
 
-def dict_of_rest(soup):
+def update_table_in_db(soup):
     """
     Gets a soup objet of a restaurant webpage from Tripadvisor and returns the details of the restaurant in a dictionary
     :param soup: soup object of restaurant webpage
@@ -91,22 +93,31 @@ def dict_of_rest(soup):
     name = rest.get_name()
     if name:
         cuisine, price_rate = rest.get_cuisine_and_price()
-        rest_dict = {"Name": name,
-                     "Rating": rest.get_rating(),
-                     "Reviews_num": rest.get_reviews_num(),
-                     "Price_rate": price_rate,
-                     "Cuisine": cuisine,
-                     "City_rate": rest.get_city_rate(),
-                     "Address": rest.get_address(),
-                     "Website": rest.get_website(),
-                     "Phone": rest.get_phone()
-                     }
-        return rest_dict
+        details = [name,
+                   rest.get_rating(),
+                   rest.get_reviews_num(),
+                   price_rate,
+                   rest.get_city_rate(),
+                   rest.get_address(),
+                   rest.get_website(),
+                   rest.get_phone()]
+        rest_dict = dict(zip(config.RES_COLUMNS, details))
+        res_table = TableUpdate(name='restaurants',
+                                data=rest_dict,
+                                connection=config.CONNECTION)
+        res_table.insert_table()
+        res_id = res_table.get_last_res_id()
+        for cuis in cuisine:
+            data = dict(zip(config.CUIS_COLUMNS, [res_id, cuis]))
+            cuis_table = TableUpdate(name='cuisines',
+                                     data=data,
+                                     connection=config.CONNECTION)
+            cuis_table.insert_table()
     else:
         pass
 
 
-def get_rest_details(soups):
+def update_30_db(soups):
     """
     The function accepts a list of soups (html text) of detailed restaurant pages
     and return a list of dictionaries. Each dictionary contains details on restaurant
@@ -117,7 +128,5 @@ def get_rest_details(soups):
     City_rate(int, the rate of the restaurant among all the city's restaurants), Address(str, restaurant address),
     Website(str, url to the restaurant website), Phone(str, restaurant phone-number)
     """
-    rest_list = []
     for soup in soups:
-        rest_list.append(dict_of_rest(soup))
-    return rest_list
+        update_table_in_db(soup)

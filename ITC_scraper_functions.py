@@ -6,4 +6,4 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 import pandas as pd
-from detailed_page_mining import get_rest_details
+from detailed_page_mining import update_30_db

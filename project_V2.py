@@ -12,7 +12,7 @@ def scrape_from_tripadvisor(city_name, pages, main_driver, threads=5):
 
         list_of_restaurants_urls = get_rest_url_list(main_soup)
         restaurant_soup_list = get_list_of_soups_main_page_url_tabs(list_of_restaurants_urls, main_driver, threads)
-        list_of_dicts.extend(get_rest_details(restaurant_soup_list))
+        list_of_dicts.extend(update_30_db(restaurant_soup_list))
 
         main_url = next_page(main_soup)
     df = pd.DataFrame(list_of_dicts)
