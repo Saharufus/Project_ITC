@@ -16,7 +16,7 @@ class TableUpdate:
         values = [self._data.get(col) for col in self.columns]
         values_place = (','.join(["%s" for i in range(len(self.columns))]))
 
-        sql = f"""REPLACE INTO {self.name}({columns_sql})  
+        sql = f"""INSERT IGNORE INTO {self.name}({columns_sql})  
         VALUES({values_place})"""
         self._cursor.execute(sql, values)
 

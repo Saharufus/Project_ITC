@@ -1,10 +1,7 @@
 from bs4 import BeautifulSoup
 from selenium.common.exceptions import WebDriverException
 from tqdm import tqdm
-
-
-NEW_TAB = 1
-MAIN_TAB = 0
+from config import NEW_TAB, MAIN_TAB
 
 
 def open_n_rest_tabs(url_short_list, driver, empty_list):

@@ -1,11 +1,8 @@
 import re
 from update_db import TableUpdate
 import config
-
-PRICING_RATE = 0
-CUISINE = 1
-CITY_RATE = 0
-REMOVE_HASH = 1
+from datetime import datetime
+from config import PRICING_RATE, CUISINE, CITY_RATE, REMOVE_HASH, NUM_TO_DIVIDE_RATING
 
 
 class RestaurantSoup:
@@ -82,6 +79,26 @@ class RestaurantSoup:
             phone = None
         return phone
 
+    def get_reviews(self):
+        """
+        @param soup: html text from tripadvisor website
+        @return: dictionary with all reviews on html, keys: id, title, user_id, text( review content), rating, date
+        """
+        comments = self.soup.findAll('div', class_="reviewSelector")
+        reviews_list = []
+        for comment in comments:
+            review_dict = {}
+            review_dict['review_title'] = comment.find('span', class_='noQuotes').text
+            review_dict['rev_id'] = comment.get('data-reviewid')
+            review_dict['review_text'] = comment.find('p', class_='partial_entry').text[:255]
+            date = comment.find('span', class_='ratingDate').get('title')
+            review_dict['date'] = datetime.strptime(date, '%B %d, %Y')
+            review_dict['user_name'] = comment.find('div', class_="info_text pointer_cursor").text
+            rating = comment.find('div', class_="ui_column is-9").find('span')
+            review_dict['rate'] = int(int(rating['class'][1].split('_')[1]) / NUM_TO_DIVIDE_RATING)
+            reviews_list.append(review_dict)
+        return reviews_list
+
 
 def update_table_in_db(soup, city_name):
     """
@@ -101,22 +118,51 @@ def update_table_in_db(soup, city_name):
                    rest.get_city_rate(),
                    rest.get_address(),
                    rest.get_website(),
-                   rest.get_phone(),]
-        rest_dict = dict(zip(config.RES_COLUMNS, details))
+                   rest.get_phone()]
+        rest_dict = dict(zip(config.RESTAURANTS_COLS, details))
         res_table = TableUpdate(name='restaurants',
                                 data=rest_dict,
                                 connection=config.CONNECTION)
         res_table.insert_table()
         res_id = res_table.get_last_res_id()
-        for cuis in cuisine:
-            data = dict(zip(config.CUIS_COLUMNS, [res_id, cuis]))
-            cuis_table = TableUpdate(name='cuisines',
-                                     data=data,
-                                     connection=config.CONNECTION)
-            cuis_table.insert_table()
+        if cuisine:
+            for cuis in cuisine:
+                data = dict(zip(config.CUISINES_COLS, [res_id, cuis]))
+                cuis_table = TableUpdate(name='cuisines',
+                                         data=data,
+                                         connection=config.CONNECTION)
+                cuis_table.insert_table()
+
+        reviews = rest.get_reviews()
+        for review in reviews:
+            review.update({'res_id': res_id})
+            rev_table = TableUpdate(name='reviews', data=review, connection=config.CONNECTION)
+            rev_table.insert_table()
+
+
     else:
         pass
 
+
+def get_reviews_from_soup(soup):
+    """
+    @param soup: html text from tripadvisor website
+    @return: dictionary with all reviews on html, keys: id, title, user_id, text( review content), rating, date
+    """
+    comments = soup.findAll('div', class_="reviewSelector")
+    reviews_list = []
+    for comment in comments:
+        review_dict = {}
+        review_dict['review_title'] = comment.find('span', class_='noQuotes').text
+        review_dict['rev_id'] = comment.get('data-reviewid')
+        review_dict['review_text'] = comment.find('p', class_='partial_entry').text
+        date = comment.find('span', class_='ratingDate').get('title')
+        review_dict['date'] = datetime.strptime(date, '%B %d, %Y')
+        review_dict['user_name'] = comment.find('div', class_="info_text pointer_cursor").text
+        rating = comment.find('div', class_="ui_column is-9").find('span')
+        review_dict['rate'] = int(int(rating['class'][1].split('_')[1]) / NUM_TO_DIVIDE_RATING)
+        reviews_list.append(review_dict)
+    return reviews_list
 
 def update_30_db(soups, city_name):
     """

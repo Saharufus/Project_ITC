@@ -1,6 +1,4 @@
-import config
-DIGIT = 0
-
+from config import DIGIT, MAIN_PAGE
 
 def get_rest_url_list(main_soup):
     """
@@ -18,6 +16,6 @@ def get_rest_url_list(main_soup):
         rest_name = rest_soup.text
         if rest_name[DIGIT].isdigit():  # get rid of the sponsored
             rest_url = rest_soup.get("href")
-            urls.append(config.MAIN_PAGE+rest_url)
+            urls.append(MAIN_PAGE+rest_url)
 
     return urls
