@@ -18,7 +18,6 @@ First time initialization:
  - Install requirements.txt ```pip install -r requirements.txt```
  - Edit db_config.py ```USERNAME``` and ```PASSWORD``` with local MySQL configuration
  - Edit config.py ```USERNAME``` and ```PASSWORD``` with local MySQL configuration
- - Create local db by running ```create_db.py```
 
 Run ```tripadvisor_scraper.py -c "city_1" "city_2" etc -p #num#```
 
