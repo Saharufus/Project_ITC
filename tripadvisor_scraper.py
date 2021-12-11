@@ -2,6 +2,7 @@ import argparse
 import scraper
 import time
 from config import THREADS
+import create_db
 
 
 def scrape_command():
@@ -30,4 +31,5 @@ def scrape_command():
 
 
 if __name__ == '__main__':
+    create_db.create_db()
     scrape_command()

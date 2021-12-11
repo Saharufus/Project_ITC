@@ -11,8 +11,14 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 
 def scrape_from_tripadvisor(city_name, pages, main_driver, threads=5):
-    """Scrapes Tripadvisor restaurants in a given city and saves the data to file_name.csv"""
-    main_url = get_city_rest_url(city_name, main_driver)  # a string of a url for the city page
+    """
+    Performs scrape and updating db per city user input
+    @param city_name: name of the city to scrape restaurants from
+    @param pages: number of rests pages to scrape
+    @param main_driver: browser driver object
+    @param threads: number of threads
+    """
+    main_url = get_city_rest_url(city_name, main_driver)
     for page in range(pages):
         main_driver.get(main_url)
         main_soup = BeautifulSoup(main_driver.page_source, 'html.parser')
@@ -23,6 +29,12 @@ def scrape_from_tripadvisor(city_name, pages, main_driver, threads=5):
 
 
 def scrape_list_of_cities(list_of_cities, pages, threads=5):
+    """
+    Main Function - fills db for all cities using helper functions
+    @param list_of_cities: list of cities received from user input
+    @param pages: number of pages to scrape per city
+    @param threads: number of threads
+    """
     options = Options()
     options.headless = True
     s = Service(ChromeDriverManager().install())
