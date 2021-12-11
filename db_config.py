@@ -1,5 +1,3 @@
-import pymysql
-
 # define username and password based on local mysql configuration
 MYSQL_USERNAME = 'root'
 MYSQL_PASSWORD = 'root'
@@ -26,17 +24,12 @@ REVIEWS_COLS = ['rev_id',
                 'date',
                 'review_text']
 
-INIT_CONNECTION = pymysql.connect(host=HOST,
-                                  user=MYSQL_USERNAME,
-                                  password=MYSQL_PASSWORD,
-                                  cursorclass=pymysql.cursors.DictCursor)
-
 # creating data base MySQL queries:
-CREATE_DB = """CREATE DATABASE restaurants;"""
+CREATE_DB = """CREATE DATABASE IF NOT EXISTS restaurants;"""
 
 USE_DB = """USE restaurants;"""
 
-CREATE_RES = """CREATE TABLE restaurants (
+CREATE_RES = """CREATE TABLE IF NOT EXISTS restaurants (
                 res_id int auto_increment primary key,
                 city_name varchar(255),
                 res_name varchar(255),
@@ -47,16 +40,16 @@ CREATE_RES = """CREATE TABLE restaurants (
                 address varchar(255),
                 website varchar(255),
                 phone varchar(255),
-                UNIQUE (city_name, phone)
+                UNIQUE (city_name,res_name, address)
             );"""
 
-CREATE_CUIS = """CREATE TABLE cuisines (
+CREATE_CUIS = """CREATE TABLE IF NOT EXISTS cuisines (
                         res_id int,
                         cuisine varchar(255),
                     	FOREIGN KEY (res_id) REFERENCES restaurants(res_id)
                     );"""
 
-CREATE_REV = """CREATE TABLE reviews (
+CREATE_REV = """CREATE TABLE IF NOT EXISTS reviews (
                         rev_id int primary key,
                         user_name varchar(255),
                         review_title varchar(255),
@@ -68,4 +61,3 @@ CREATE_REV = """CREATE TABLE reviews (
                     );"""
 
 CREATE_DB_QUERIES_INIT = [CREATE_DB, USE_DB, CREATE_RES, CREATE_CUIS, CREATE_REV]
-

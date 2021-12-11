@@ -1,5 +1,3 @@
-import pymysql
-
 THREADS = 5
 NEW_TAB = 1
 MAIN_TAB = 0
@@ -10,6 +8,7 @@ CITY_RATE = 0
 REMOVE_HASH = 1
 NUM_TO_DIVIDE_RATING = 10
 DIGIT = 0
+SEARCH_BOX = 1
 
 # define username and password based on local mysql configuration
 MYSQL_USERNAME = 'root'
@@ -44,13 +43,3 @@ REVIEWS_COLS = ['rev_id',
                 'rate',
                 'date',
                 'review_text']
-
-CONNECTION = pymysql.connect(host=HOST,
-                             user=MYSQL_USERNAME,
-                             password=MYSQL_PASSWORD,
-                             database=DB,
-                             cursorclass=pymysql.cursors.DictCursor,)
-
-
-
-

@@ -4,20 +4,17 @@ import time
 import config
 
 
-SEARCH_BOX = 1
-
-
 def get_city_rest_url(city_name, driver):
     """
     Function returns city url in tripadvisor based on input city_name
-    :param city_name: string - city name
-    :param driver: A main driver to work on
-    :return: string - url in for restaurants page of the city in tripadvisor
+    @param city_name: string - city name
+    @param driver: A main driver to work on
+    @return: string - url in for restaurants page of the city in tripadvisor
     """
     driver.get(config.WEBSITE_REST_URL)
     search = driver.find_elements(By.CSS_SELECTOR, "input.fhEMT._G.B-.z._J.Cj.R0")
-    search[SEARCH_BOX].click()
-    search[SEARCH_BOX].send_keys(city_name)
+    search[config.SEARCH_BOX].click()
+    search[config.SEARCH_BOX].send_keys(city_name)
     time.sleep(2)
     html_from_page = driver.page_source
     soup = BeautifulSoup(html_from_page, 'html.parser')

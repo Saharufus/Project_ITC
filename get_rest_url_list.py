@@ -3,7 +3,7 @@ from config import DIGIT, MAIN_PAGE
 def get_rest_url_list(main_soup):
     """
     The function accepts a url for 30 restaurants, and returns a list of 30 urls, of each restaurant detailed page
-    :param main_soup: rl for 30 restaurants
+    :param main_soup: url for 30 restaurants
     :return: list of 30 urls
     """
 

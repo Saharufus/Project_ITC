@@ -81,7 +81,6 @@ class RestaurantSoup:
 
     def get_reviews(self):
         """
-        @param soup: html text from tripadvisor website
         @return: dictionary with all reviews on html, keys: id, title, user_id, text( review content), rating, date
         """
         comments = self.soup.findAll('div', class_="reviewSelector")
@@ -102,9 +101,9 @@ class RestaurantSoup:
 
 def update_table_in_db(soup, city_name):
     """
-    Gets a soup objet of a restaurant webpage from Tripadvisor and returns the details of the restaurant in a dictionary
+    Gets a soup object of a restaurant webpage from Tripadvisor and feed the db with mined data
     :param soup: soup object of restaurant webpage
-    :return: dictionary: {'name': name_of_rest, 'rating': rating_of_rest,...}
+    :param city_name: name of the city
     """
     rest = RestaurantSoup(soup)
     name = rest.get_name()
@@ -121,33 +120,27 @@ def update_table_in_db(soup, city_name):
                    rest.get_phone()]
         rest_dict = dict(zip(config.RESTAURANTS_COLS, details))
         res_table = TableUpdate(name='restaurants',
-                                data=rest_dict,
-                                connection=config.CONNECTION)
+                                data=rest_dict)
         res_table.insert_table()
         res_id = res_table.get_last_res_id()
         if cuisine:
             for cuis in cuisine:
                 data = dict(zip(config.CUISINES_COLS, [res_id, cuis]))
                 cuis_table = TableUpdate(name='cuisines',
-                                         data=data,
-                                         connection=config.CONNECTION)
+                                         data=data)
                 cuis_table.insert_table()
 
         reviews = rest.get_reviews()
         for review in reviews:
             review.update({'res_id': res_id})
-            rev_table = TableUpdate(name='reviews', data=review, connection=config.CONNECTION)
+            rev_table = TableUpdate(name='reviews', data=review)
             rev_table.insert_table()
-
-
-    else:
-        pass
 
 
 def get_reviews_from_soup(soup):
     """
     @param soup: html text from tripadvisor website
-    @return: dictionary with all reviews on html, keys: id, title, user_id, text( review content), rating, date
+    @return: list of dictionaries with all reviews.  keys: rev_id, review_title, user_name, review_text, rate, date
     """
     comments = soup.findAll('div', class_="reviewSelector")
     reviews_list = []
@@ -164,16 +157,13 @@ def get_reviews_from_soup(soup):
         reviews_list.append(review_dict)
     return reviews_list
 
+
 def update_30_db(soups, city_name):
     """
     The function accepts a list of soups (html text) of detailed restaurant pages
-    and return a list of dictionaries. Each dictionary contains details on restaurant
-    :param soups: list of BeautifulSoup object (html text)
-    :return: list of restaurant details dictionaries, as described bellow:
-    dict items: Name(str, restaurant name), Rating(float, restaurant rating between 1-5), Reviews_num(int, the number of
-    reviewers), Price_rate(str of $, representing the price rate), Cuisine(str, restaurant cuisine), separate by comma),
-    City_rate(int, the rate of the restaurant among all the city's restaurants), Address(str, restaurant address),
-    Website(str, url to the restaurant website), Phone(str, restaurant phone-number)
+    and updates table with soups batch
+    @param soups: list of BeautifulSoup objects (html text)
+    @param city_name: name of the scraped city
     """
     for soup in soups:
         update_table_in_db(soup, city_name)

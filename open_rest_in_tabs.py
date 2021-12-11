@@ -25,10 +25,11 @@ def open_n_rest_tabs(url_short_list, driver, empty_list):
 
 def get_list_of_soups_main_page_url_tabs(url_list, driver, threads):
     """
-    Fills a list with soups of restaurants from list of urls
-    :param url_list: List of urls of 30 restaurants in main page
-    :param driver: A main driver to work on
-    :param threads: Number of tabs to open simultaneously
+    This function List of urls of 30 restaurants in main page
+    @param url_list: List of urls of 30 restaurants in main page
+    @param driver: A main driver to work on
+    @param threads: Number of tabs to open simultaneously
+    @return: list with soups of restaurants from list of urls
     """
     soup_list = []
     for i in tqdm(range(len(url_list) // threads)):
