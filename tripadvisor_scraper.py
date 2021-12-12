@@ -3,6 +3,9 @@ import scraper
 import time
 from config import THREADS
 import create_db
+import logging
+
+logging.basicConfig(filename='Tripadvisor scraper log', level=logging.INFO, format='%(asctime)s - %(levelname)s: %(message)s', filemode='w')
 
 
 def scrape_command():
@@ -33,9 +36,9 @@ def scrape_command():
         page = 'page'
     else:
         page = 'pages'
-    print(f'It took {"%.2f" % (end - start)} seconds to scrape {args.pages} {page} from restaurants in {", ".join(args.city)}')
+    logging.info(f'It took {"%.2f" % (end - start)} seconds to scrape {args.pages} {page} from restaurants in {", ".join(args.city)}')
 
 
 if __name__ == '__main__':
-    create_db.create_db()
+    # create_db.create_db()
     scrape_command()
