@@ -1,8 +1,8 @@
 import argparse
-import project_V2
+import scraper
 import time
-
-THREADS = 5
+from config import THREADS
+import create_db
 
 
 def scrape_command():
@@ -21,7 +21,7 @@ def scrape_command():
                             help='Number of pages to scrape',
                             metavar='N')
     args = the_parser.parse_args()
-    project_V2.scrape_list_of_cities(list_of_cities=args.city, pages=args.pages, threads=THREADS)
+    scraper.scrape_list_of_cities(list_of_cities=args.city, pages=args.pages, threads=THREADS)
     end = time.time()
     if args.pages == 1:
         page = 'page'
@@ -31,4 +31,5 @@ def scrape_command():
 
 
 if __name__ == '__main__':
+    create_db.create_db()
     scrape_command()

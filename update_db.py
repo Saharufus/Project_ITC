@@ -1,5 +1,9 @@
+import pymysql
+import config
+
+
 class TableUpdate:
-    def __init__(self, name, data, connection):
+    def __init__(self, name, data):
         """
         name: table name (as the name in MySQL DB)
         columns: list of columns name (equals in DB and the keys of the data dict)
@@ -8,15 +12,19 @@ class TableUpdate:
         self.name = name
         self.columns = data.keys()
         self._data = data
-        self._connection = connection
-        self._cursor = connection.cursor()
+        self._connection = pymysql.connect(host=config.HOST,
+                                           user=config.MYSQL_USERNAME,
+                                           password=config.MYSQL_PASSWORD,
+                                           database=config.DB,
+                                           cursorclass=pymysql.cursors.DictCursor)
+        self._cursor = self._connection.cursor()
 
     def insert_table(self):
         columns_sql = ','.join(self.columns)
         values = [self._data.get(col) for col in self.columns]
         values_place = (','.join(["%s" for i in range(len(self.columns))]))
 
-        sql = f"""REPLACE INTO {self.name}({columns_sql})  
+        sql = f"""INSERT IGNORE INTO {self.name}({columns_sql})  
         VALUES({values_place})"""
         self._cursor.execute(sql, values)
 

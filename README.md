@@ -3,25 +3,22 @@
 Creators: Sahar G. | Bar I. | Omer C.  
 
 Main project purpose:  
-&emsp;Create an easy-to-read table of restaurants in a chosen city.  
-&emsp;The table will contain information about the type of the restaurant,  
-&emsp;the pricing of the restaurant, number of reviews and average review.
+&emsp;Create an easy-to-read db of restaurants in chosen cities.  
+&emsp;The db will contain 3 tables: restaurants, cuisines, reviews.     
+&emsp;See ERD below for tables contents.
 
-By using the function ```food_scraper``` you can gather information from Tripadvisor  
-and insert it into said table.  
-The variables of ```food_scraper``` are as follows:
-* <span style="color: red">file_name</span> - The name of the csv file that will be created in the working folder.
-* <span style="color: red">city</span> - Restaurants from this city will get inserted to the csv file
-* <span style="color: red">first_page</span> - The page of Tripadvisor to start the scrape from
-* <span style="color: red">last_page</span> - The page to finish the scrape
+By using the ```tripadvisor_scraper.py```  you can insert list of cities and number of pages per city (max 30 restaurants per page).  
+and it will insert desired data to db tables.    
+The arguments of ```tripadvisor_scraper.py``` are as follows:
+* <span style="color: red">cities</span> - name of the desired cities, ```-c "city_1" "city_2"```
+* <span style="color: red">pages</span> - Number of restaurants pages to scrape per city ```-p #num```
 
-Fields that will be in the csv:
-* <span style="color: red">Restaurant name</span>
-* <span style="color: red">Rating</span> - Average review of the restaurant (0-5)
-* <span style="color: red">Number of reviews</span>
-* <span style="color: red">Price</span> - for now it is written in format of $ - $$$$
-* <span style="color: red">Restaurant type (Cuisine)</span> - What kind of food the restaurant serves
-* <span style="color: red">City rate/span> - The rank of the restaurant among all the other restaurants in the city
-* <span style="color: red">Address</span> 
-* <span style="color: red">Website</span> 
-* <span style="color: red">Phone number</span> 
+####Initial Configuration:
+First time initialization:
+ - Install requirements.txt ```pip install -r requirements.txt```
+ - Edit db_config.py ```USERNAME``` and ```PASSWORD``` with local MySQL configuration
+ - Edit config.py ```USERNAME``` and ```PASSWORD``` with local MySQL configuration
+
+Run ```tripadvisor_scraper.py -c "city_1" "city_2" etc -p #num#```
+
+![](ERD_checkpoint2.png)
