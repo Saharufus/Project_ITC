@@ -8,6 +8,9 @@ import create_db
 def scrape_command():
     start = time.time()
     the_parser = argparse.ArgumentParser(usage='Scrape Tripadvisor\'s restaurant info\n', allow_abbrev=False)
+    the_parser.add_argument('--API',
+                            action='store_true',
+                            help='Scrape data from API')
     the_parser.add_argument('-c',
                             '--city',
                             required=True,
@@ -21,7 +24,10 @@ def scrape_command():
                             help='Number of pages to scrape',
                             metavar='N')
     args = the_parser.parse_args()
-    scraper.scrape_list_of_cities(list_of_cities=args.city, pages=args.pages, threads=THREADS)
+    if args.API:
+        print('Here is the place for the API function')
+    else:
+        scraper.scrape_list_of_cities(list_of_cities=args.city, pages=args.pages, threads=THREADS)
     end = time.time()
     if args.pages == 1:
         page = 'page'
