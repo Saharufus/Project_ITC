@@ -83,9 +83,6 @@ class RestaurantFromAPI:
         return cuisines
 
 
-def scrape_cities_API(list_of_cities, num_rests):
-    pass
-
 
 def get_city_data_API(city):
     querystring = {"query": city, "limit": '1', "currency": CURRENCY,
@@ -100,12 +97,41 @@ def get_city_data_API(city):
     return city_record
 
 
+def get_rest_list(location_id, num_rests):
+    querystring = dict(location_id=location_id, restaurant_tagcategory="10591", restaurant_tagcategory_standalone="10591",
+                       currency="USD", lunit="km", limit=num_rests, open_now="false", lang="en_US")
+    response = requests.request("GET", API_RESTS_URL, headers=HEADERS_LOCATION, params=querystring)
+    rests_data = response.json()['data']
+    return rests_data
+
+
+def scrape_cities_API(list_of_cities, num_rests):
+    for city in list_of_cities:
+        city_dict = get_city_data_API(city)
+        # bar_function(city_dict)
+        location_id = city_dict['location_id']
+        rests_list = get_rest_list(location_id, num_rests)
+        for rest_dict in rests_list:
+            if 'ad_position' not in rest_dict.keys():
+                rest_obj =  RestaurantFromAPI(rest_dict, location_id)
+                #bar's function
+
 
 if __name__ == '__main__':
     querystring = dict(location_id="293984", restaurant_tagcategory="10591", restaurant_tagcategory_standalone="10591",
                        currency="USD", lunit="km", limit="30", open_now="false", lang="en_US")
     response = requests.request("GET", API_RESTS_URL, headers=HEADERS_LOCATION, params=querystring)
     data = response.json()['data']
-    print(data)
-    a = RestaurantFromAPI(data[5],293984 )
++    for k in data:
+        print(k)
+    a = RestaurantFromAPI(data[4],293984)
+    print('city record')
+    print(get_city_data_API('tel aviv'))
+    print('rest record')
     print(a.get_rest_for_db())
+    print('cuisine record')
+    print(a.get_cuisines())
+    print('review record')
+    print(a.get_reviews())
+    print('award record')
+    print(a.get_awards())
