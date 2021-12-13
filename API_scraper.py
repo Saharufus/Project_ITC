@@ -7,7 +7,8 @@ API_LOCATIONS_URL = "https://travel-advisor.p.rapidapi.com/locations/search"
 API_RESTS_URL = "https://travel-advisor.p.rapidapi.com/restaurants/list"
 API_REVIEWS_URL = "https://travel-advisor.p.rapidapi.com/restaurants/get-details"
 
-RESTAURANTS_COLS_DB = ['res_name',
+RESTAURANTS_COLS_DB = ['location_id',
+                       'res_name',
                        'rating',
                        'reviews_num',
                        'price_rate',
@@ -40,10 +41,11 @@ class RestaurantFromAPI:
         self.latitude = float(rest_dict['latitude'])
         self.longitude = float(rest_dict['longitude'])
         self.location_id = location_id
-        ##add city ID to dict
+
 
     def get_rest_for_db(self):
-        details = [self.res_name,
+        details = [self.location_id,
+                   self.res_name,
                    self.rating,
                    self.reviews_num,
                    self.price_rate,
@@ -77,7 +79,8 @@ class RestaurantFromAPI:
         return reviews_list
 
     def get_cuisines(self):
-        pass
+        cuisines = [cuis['name'] for cuis in self.rest_dict['cuisine']]
+        return cuisines
 
 
 def scrape_cities_API(list_of_cities, num_rests):
@@ -103,6 +106,6 @@ if __name__ == '__main__':
                        currency="USD", lunit="km", limit="30", open_now="false", lang="en_US")
     response = requests.request("GET", API_RESTS_URL, headers=HEADERS_LOCATION, params=querystring)
     data = response.json()['data']
-    # print(data)
-    a = RestaurantFromAPI(data[3])
-    print(a.get_awards())
+    print(data)
+    a = RestaurantFromAPI(data[5],293984 )
+    print(a.get_rest_for_db())
