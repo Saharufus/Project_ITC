@@ -9,6 +9,7 @@ from detailed_page_mining import update_30_db
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 import logging
+import re
 
 logging.basicConfig(filename='Tripadvisor scraper log', level=logging.INFO, format='%(asctime)s - %(levelname)s: %(message)s', filemode='w')
 
@@ -22,6 +23,7 @@ def scrape_from_tripadvisor(city_name, pages, main_driver, threads=5):
     @param threads: number of threads
     """
     main_url = get_city_rest_url(city_name, main_driver)
+    city_id = int(re.search(r'\d+', main_url).group())
     for page in range(pages):
         main_driver.get(main_url)
         main_soup = BeautifulSoup(main_driver.page_source, 'html.parser')
