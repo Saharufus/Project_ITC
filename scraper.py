@@ -8,6 +8,9 @@ from selenium.webdriver.chrome.options import Options
 from detailed_page_mining import update_30_db
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
+import logging
+
+logging.basicConfig(filename='Tripadvisor scraper log', level=logging.INFO, format='%(asctime)s - %(levelname)s: %(message)s', filemode='w')
 
 
 def scrape_from_tripadvisor(city_name, pages, main_driver, threads=5):
@@ -26,6 +29,7 @@ def scrape_from_tripadvisor(city_name, pages, main_driver, threads=5):
         restaurant_soup_list = get_list_of_soups_main_page_url_tabs(list_of_restaurants_urls, main_driver, threads)
         update_30_db(restaurant_soup_list, city_name)
         main_url = next_page(main_soup)
+        logging.info(f'Finished scraping page number {page + 1}')
 
 
 def scrape_list_of_cities(list_of_cities, pages, threads=5):
@@ -41,4 +45,5 @@ def scrape_list_of_cities(list_of_cities, pages, threads=5):
     main_driver = webdriver.Chrome(service=s)
     for city in list_of_cities:
         scrape_from_tripadvisor(city, pages, main_driver, threads)
+        logging.info(f'Finished scraping {city}\'s restaurants')
     main_driver.quit()

@@ -1,5 +1,8 @@
 from db_config import *
 import pymysql
+import logging
+
+logging.basicConfig(filename='Tripadvisor scraper log', level=logging.INFO, format='%(asctime)s - %(levelname)s: %(message)s', filemode='w')
 
 
 def create_db(queries=CREATE_DB_QUERIES_INIT):
@@ -12,4 +15,4 @@ def create_db(queries=CREATE_DB_QUERIES_INIT):
     for query in queries:
         cursor.execute(query)
         connection.commit()
-    print('database created successfully')
+    logging.info('database created successfully')

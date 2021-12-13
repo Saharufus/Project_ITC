@@ -1,7 +1,9 @@
 from bs4 import BeautifulSoup
 from selenium.common.exceptions import WebDriverException
-from tqdm import tqdm
 from config import NEW_TAB, MAIN_TAB
+import logging
+
+logging.basicConfig(filename='Tripadvisor scraper log', level=logging.INFO, format='%(asctime)s - %(levelname)s: %(message)s', filemode='w')
 
 
 def open_n_rest_tabs(url_short_list, driver, empty_list):
@@ -20,7 +22,7 @@ def open_n_rest_tabs(url_short_list, driver, empty_list):
             empty_list.append(BeautifulSoup(driver.page_source, 'html.parser'))
             driver.close()
         except WebDriverException:
-            pass
+            logging.warning(f'Could not open page:{driver.current_url}')
 
 
 def get_list_of_soups_main_page_url_tabs(url_list, driver, threads):
@@ -32,7 +34,7 @@ def get_list_of_soups_main_page_url_tabs(url_list, driver, threads):
     @return: list with soups of restaurants from list of urls
     """
     soup_list = []
-    for i in tqdm(range(len(url_list) // threads)):
+    for i in range(len(url_list) // threads):
         open_n_rest_tabs(url_list[i*threads:(i+1)*threads], driver, soup_list)
         driver.switch_to.window(driver.window_handles[MAIN_TAB])
     return soup_list
