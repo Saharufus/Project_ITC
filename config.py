@@ -24,6 +24,7 @@ CUIS_TAB = 'cuisines'
 REV_TAB = 'reviews'
 
 RESTAURANTS_COLS = ['res_name',
+                    'city_id',
                     'city_name',
                     'rating',
                     'reviews_num',

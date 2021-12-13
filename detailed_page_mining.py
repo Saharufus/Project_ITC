@@ -99,7 +99,7 @@ class RestaurantSoup:
         return reviews_list
 
 
-def update_table_in_db(soup, city_name):
+def update_table_in_db(soup, city_name, city_id):
     """
     Gets a soup object of a restaurant webpage from Tripadvisor and feed the db with mined data
     :param soup: soup object of restaurant webpage
@@ -110,6 +110,7 @@ def update_table_in_db(soup, city_name):
     if name:
         cuisine, price_rate = rest.get_cuisine_and_price()
         details = [name,
+                   city_id,
                    city_name,
                    rest.get_rating(),
                    rest.get_reviews_num(),
@@ -158,7 +159,7 @@ def get_reviews_from_soup(soup):
     return reviews_list
 
 
-def update_30_db(soups, city_name):
+def update_30_db(soups, city_name, city_id):
     """
     The function accepts a list of soups (html text) of detailed restaurant pages
     and updates table with soups batch
@@ -166,4 +167,4 @@ def update_30_db(soups, city_name):
     @param city_name: name of the scraped city
     """
     for soup in soups:
-        update_table_in_db(soup, city_name)
+        update_table_in_db(soup, city_name, city_id)
