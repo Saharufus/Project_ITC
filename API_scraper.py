@@ -97,7 +97,7 @@ def get_city_data_API(city):
     return city_record
 
 
-def get_rest_list(location_id, num_rests):
+def get_rest_list_API(location_id, num_rests):
     querystring = dict(location_id=location_id, restaurant_tagcategory="10591", restaurant_tagcategory_standalone="10591",
                        currency="USD", lunit="km", limit=num_rests, open_now="false", lang="en_US")
     response = requests.request("GET", API_RESTS_URL, headers=HEADERS_LOCATION, params=querystring)
@@ -110,11 +110,10 @@ def scrape_cities_API(list_of_cities, num_rests):
         city_dict = get_city_data_API(city)
         # bar_function(city_dict)
         location_id = city_dict['location_id']
-        rests_list = get_rest_list(location_id, num_rests)
+        rests_list = get_rest_list_API(location_id, num_rests)
         for rest_dict in rests_list:
             if 'ad_position' not in rest_dict.keys():
-                rest_obj =  RestaurantFromAPI(rest_dict, location_id)
-                #bar's function
+                #bar's function (rest_dict)
 
 
 if __name__ == '__main__':
