@@ -4,9 +4,10 @@ import time
 from config import THREADS
 import create_db
 import logging
+import API_scraper
 
 logging.basicConfig(filename='Tripadvisor scraper log', level=logging.INFO, format='%(asctime)s - %(levelname)s: %(message)s', filemode='w')
-
+NUM_OF_RESTS_PER_PAGE = 30
 
 def scrape_command():
     start = time.time()
@@ -28,6 +29,7 @@ def scrape_command():
                             metavar='N')
     args = the_parser.parse_args()
     if args.API:
+        API_scraper.scrape_cities_API(list_of_cities=args.city, num_rests=args.pages*NUM_OF_RESTS_PER_PAGE)
         print('Here is the place for the API function')
     else:
         scraper.scrape_list_of_cities(list_of_cities=args.city, pages=args.pages, threads=THREADS)
