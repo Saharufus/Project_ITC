@@ -56,7 +56,7 @@ class RestaurantFromAPI:
         return award_list
 
     def get_reviews(self):
-        review_query = {"location_id": self._rest_id, "currency": "USD", "lang": "en_US"}
+        review_query = {"location_id": self._rest_id, "currency": CURRENCY, "lang": LANG}
         review_response = requests.request("GET", API_REVIEWS_URL, headers=HEADERS_LOCATION, params=review_query)
         if MIN_REQ_STATUS_CODE <= review_response.status_code < MAX_REQ_STATUS_CODE:
             logging.info(f'Reviews requested successfully for rest {self.res_name}')
@@ -83,7 +83,7 @@ class RestaurantFromAPI:
 
 def get_city_data_API(city):
     querystring = {"query": city, "limit": '1', "currency": CURRENCY,
-                   "sort": "relevance", "lang": "en_US"}
+                   "sort": SORT_METHOD, "lang": LANG}
     response = requests.request("GET", API_LOCATIONS_URL, headers=HEADERS_LOCATION, params=querystring)
     if MIN_REQ_STATUS_CODE <= response.status_code < MAX_REQ_STATUS_CODE:
         logging.info('Cities requested successfully')
@@ -109,9 +109,9 @@ def get_city_data_API(city):
 def get_rest_list_API(location_id, num_pages):
     rests_data = []
     for i in range(num_pages):
-        querystring = dict(location_id=location_id, restaurant_tagcategory="10591",
-                           restaurant_tagcategory_standalone="10591",
-                           currency="USD", lunit="km", limit=NUM_OF_RESTS_PER_PAGE, open_now="false", lang="en_US",
+        querystring = dict(location_id=location_id, restaurant_tagcategory=RESTAURANT_TAGCATEGORY,
+                           restaurant_tagcategory_standalone=RESTAURANT_TAGCATEGORY,
+                           currency=CURRENCY, lunit=LUNIT, limit=NUM_OF_RESTS_PER_PAGE, open_now="false", lang=LANG,
                            offset=i * NUM_OF_RESTS_PER_PAGE)
         response = requests.request("GET", API_RESTS_URL, headers=HEADERS_LOCATION, params=querystring)
         if MIN_REQ_STATUS_CODE <= response.status_code < MAX_REQ_STATUS_CODE:

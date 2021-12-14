@@ -39,8 +39,8 @@ def scrape_command():
         page = 'page'
     else:
         page = 'pages'
-    logging.info(
-        f'It took {"%.2f" % (end - start)} seconds to scrape {args.pages} {page} from restaurants in {", ".join(args.city)}')
+    logging.info(f'It took {"%.2f" % (end - start)} seconds to scrape {args.pages} {page} from restaurants in\
+{", ".join(args.city)}')
 
 
 if __name__ == '__main__':

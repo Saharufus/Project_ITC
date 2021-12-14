@@ -66,6 +66,10 @@ MAX_CHARS = 255
 
 NUM_OF_RESTS_PER_PAGE = 30
 CURRENCY = "USD"
+LANG = "en_US"
+SORT_METHOD = "relevance"
+RESTAURANT_TAGCATEGORY = "10591"
+LUNIT = 'km'
 API_LOCATIONS_URL = "https://travel-advisor.p.rapidapi.com/locations/search"
 API_RESTS_URL = "https://travel-advisor.p.rapidapi.com/restaurants/list"
 API_REVIEWS_URL = "https://travel-advisor.p.rapidapi.com/restaurants/get-details"

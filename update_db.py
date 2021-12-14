@@ -1,6 +1,6 @@
 import pymysql
 import config
-import db_config
+from db_config import MYSQL_PASSWORD, HOST, MYSQL_USERNAME
 
 
 class TableUpdate:
@@ -13,9 +13,9 @@ class TableUpdate:
         self.name = name
         self.columns = data.keys()
         self._data = data
-        self._connection = pymysql.connect(host=db_config.HOST,
-                                           user=db_config.MYSQL_USERNAME,
-                                           password=db_config.MYSQL_PASSWORD,
+        self._connection = pymysql.connect(host=HOST,
+                                           user=MYSQL_USERNAME,
+                                           password=MYSQL_PASSWORD,
                                            database=config.DB,
                                            cursorclass=pymysql.cursors.DictCursor)
         self._cursor = self._connection.cursor()
