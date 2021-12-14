@@ -3,7 +3,8 @@ from selenium.common.exceptions import WebDriverException
 from config import NEW_TAB, MAIN_TAB
 import logging
 
-logging.basicConfig(filename='Tripadvisor scraper log', level=logging.INFO, format='%(asctime)s - %(levelname)s: %(message)s', filemode='w')
+logging.basicConfig(filename='Tripadvisor scraper log', level=logging.INFO,
+                    format='%(asctime)s - %(levelname)s: %(message)s', filemode='w')
 
 
 def open_n_rest_tabs(url_short_list, driver, empty_list):
@@ -35,6 +36,6 @@ def get_list_of_soups_main_page_url_tabs(url_list, driver, threads):
     """
     soup_list = []
     for i in range(len(url_list) // threads):
-        open_n_rest_tabs(url_list[i*threads:(i+1)*threads], driver, soup_list)
+        open_n_rest_tabs(url_list[i * threads:(i + 1) * threads], driver, soup_list)
         driver.switch_to.window(driver.window_handles[MAIN_TAB])
     return soup_list
