@@ -4,7 +4,8 @@ import time
 import config
 import logging
 
-logging.basicConfig(filename='Tripadvisor scraper log', level=logging.INFO, format='%(asctime)s - %(levelname)s: %(message)s', filemode='w')
+logging.basicConfig(filename='Tripadvisor scraper log', level=logging.INFO,
+                    format='%(asctime)s - %(levelname)s: %(message)s', filemode='w')
 
 
 def get_city_rest_url(city_name, driver):

@@ -1,6 +1,6 @@
 # define username and password based on local mysql configuration
 MYSQL_USERNAME = 'root'
-MYSQL_PASSWORD = 'baris'
+MYSQL_PASSWORD = 'root'
 HOST = 'localhost'
 
 CITIES_COLS = ['location_id',
@@ -89,7 +89,7 @@ CREATE_REV = """CREATE TABLE IF NOT EXISTS reviews (
 	FOREIGN KEY (res_id) REFERENCES restaurants(res_id)
 );"""
 
-CREATE_AWARDS="""CREATE TABLE IF NOT EXISTS awards (
+CREATE_AWARDS = """CREATE TABLE IF NOT EXISTS awards (
     res_id int,
     award_type varchar(255),
     year int,

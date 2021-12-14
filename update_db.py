@@ -1,5 +1,6 @@
 import pymysql
 import config
+import db_config
 
 
 class TableUpdate:
@@ -12,9 +13,9 @@ class TableUpdate:
         self.name = name
         self.columns = data.keys()
         self._data = data
-        self._connection = pymysql.connect(host=config.HOST,
-                                           user=config.MYSQL_USERNAME,
-                                           password=config.MYSQL_PASSWORD,
+        self._connection = pymysql.connect(host=db_config.HOST,
+                                           user=db_config.MYSQL_USERNAME,
+                                           password=db_config.MYSQL_PASSWORD,
                                            database=config.DB,
                                            cursorclass=pymysql.cursors.DictCursor)
         self._cursor = self._connection.cursor()
@@ -27,7 +28,6 @@ class TableUpdate:
         sql = f"""INSERT IGNORE INTO {self.name}({columns_sql})  
         VALUES({values_place})"""
         self._cursor.execute(sql, values)
-
         self._connection.commit()
 
     def get_last_res_id(self):

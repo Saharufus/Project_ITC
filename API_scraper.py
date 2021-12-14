@@ -1,22 +1,10 @@
 import requests
 from datetime import datetime
-from API_db_update import api_update_cities_db, api_update_restaurant_db
-from config import RESTAURANTS_COLS, MAX_CHARS
+from API_db_update import api_update_restaurant_db
 import logging
-
-NUM_OF_RESTS_PER_PAGE = 30
-CURRENCY = "USD"
-API_LOCATIONS_URL = "https://travel-advisor.p.rapidapi.com/locations/search"
-API_RESTS_URL = "https://travel-advisor.p.rapidapi.com/restaurants/list"
-API_REVIEWS_URL = "https://travel-advisor.p.rapidapi.com/restaurants/get-details"
-
-HEADERS_LOCATION = {
-    'x-rapidapi-host': "travel-advisor.p.rapidapi.com",
-    'x-rapidapi-key': "22e2cc2258msh626c96a4012b38cp167d25jsn10e6c06452bf"
-    }
-
-MIN_REQ_STATUS_CODE = 200
-MAX_REQ_STATUS_CODE = 400
+from detailed_page_mining import update_cities_table
+import pymysql
+from config import *
 
 
 class RestaurantFromAPI:
@@ -69,15 +57,23 @@ class RestaurantFromAPI:
 
     def get_reviews(self):
         review_query = {"location_id": self._rest_id, "currency": "USD", "lang": "en_US"}
-        review_response = requests.request("GET", API_REVIEWS_URL, headers=HEADERS_LOCATION, params=review_query).json()
+        review_response = requests.request("GET", API_REVIEWS_URL, headers=HEADERS_LOCATION, params=review_query)
+        if MIN_REQ_STATUS_CODE <= review_response.status_code < MAX_REQ_STATUS_CODE:
+            logging.info(f'Reviews requested successfully for rest {self.res_name}')
+        else:
+            err = 'Reviews request failed'
+            logging.error(err)
+            raise ConnectionError(err)
+        review_response = review_response.json()
         response_reviews_list = review_response.get('reviews')
         reviews_list = []
-        for review in response_reviews_list:
-            review_dict = {'review_title': review['title'], 'rev_id': int(review['review_id']),
-                           'review_text': review['summary'][:MAX_CHARS],
-                           'date': datetime.strptime(review['published_date'].split('T')[0], '%Y-%m-%d'),
-                           'user_name': review['author'], 'rate': int(review['rating'])}
-            reviews_list.append(review_dict)
+        if response_reviews_list:
+            for review in response_reviews_list:
+                review_dict = {'review_title': review['title'], 'rev_id': int(review['review_id']),
+                               'review_text': review['summary'][:MAX_CHARS],
+                               'date': datetime.strptime(review['published_date'].split('T')[0], '%Y-%m-%d'),
+                               'user_name': review['author'], 'rate': int(review['rating'])}
+                reviews_list.append(review_dict)
         return reviews_list
 
     def get_cuisines(self):
@@ -89,57 +85,62 @@ def get_city_data_API(city):
     querystring = {"query": city, "limit": '1', "currency": CURRENCY,
                    "sort": "relevance", "lang": "en_US"}
     response = requests.request("GET", API_LOCATIONS_URL, headers=HEADERS_LOCATION, params=querystring)
-
-    # Checking response
-    # if MIN_REQ_STATUS_CODE <= response.status_code < MAX_REQ_STATUS_CODE:
-    #     logging.info('Cities requested successfully')
-    # else:
-    #     logging.error('Cities request failed')
+    if MIN_REQ_STATUS_CODE <= response.status_code < MAX_REQ_STATUS_CODE:
+        logging.info('Cities requested successfully')
+    else:
+        err = 'Cities request failed'
+        logging.error(err)
+        raise ConnectionError(err)
 
     data = response.json()
-    data = data['data'][0]['result_object']
-    city_record = {'location_id': int(data['location_id']), 'city_name': data['name'],
-                   'latitude': float(data['latitude']), 'longitude': float(data['longitude']),
-                   'timezone': data['timezone'], 'num_reviews': int(data['num_reviews']),
-                   'num_restaurants': int(data['category_counts']['restaurants']['total'])}
-    return city_record
+    try:
+        data = data['data'][0]['result_object']
+        city_record = {'location_id': int(data['location_id']), 'city_name': data['name'],
+                       'latitude': float(data['latitude']), 'longitude': float(data['longitude']),
+                       'timezone': data['timezone'], 'num_reviews': int(data['num_reviews']),
+                       'num_restaurants': int(data['category_counts']['restaurants']['total'])}
+        return city_record
+    except IndexError:
+        err = f'City {city} request failed'
+        logging.error(err)
+        raise IOError(err)
 
 
-def get_rest_list_API(location_id, num_rests):
-    querystring = dict(location_id=location_id, restaurant_tagcategory="10591",
-                       restaurant_tagcategory_standalone="10591",
-                       currency="USD", lunit="km", limit=num_rests, open_now="false", lang="en_US")
-    response = requests.request("GET", API_RESTS_URL, headers=HEADERS_LOCATION, params=querystring)
-    rests_data = response.json()['data']
+def get_rest_list_API(location_id, num_pages):
+    rests_data = []
+    for i in range(num_pages):
+        querystring = dict(location_id=location_id, restaurant_tagcategory="10591",
+                           restaurant_tagcategory_standalone="10591",
+                           currency="USD", lunit="km", limit=NUM_OF_RESTS_PER_PAGE, open_now="false", lang="en_US",
+                           offset=i * NUM_OF_RESTS_PER_PAGE)
+        response = requests.request("GET", API_RESTS_URL, headers=HEADERS_LOCATION, params=querystring)
+        if MIN_REQ_STATUS_CODE <= response.status_code < MAX_REQ_STATUS_CODE:
+            logging.info('Restaurants requested successfully')
+        else:
+            err = 'Restaurants request failed'
+            logging.error(err)
+            raise ConnectionError(err)
+        rests_data = rests_data + response.json()['data']
     return rests_data
 
 
 def scrape_cities_API(list_of_cities, num_rests):
     for city in list_of_cities:
-        city_dict = get_city_data_API(city)
-        api_update_cities_db(city_dict)
-        location_id = city_dict['location_id']
-        rests_list = get_rest_list_API(location_id, num_rests)
-        for rest_dict in rests_list:
-            if 'ad_position' not in rest_dict.keys():
-                rest_obj = RestaurantFromAPI(rest_dict, location_id)
-                api_update_restaurant_db(rest_obj)
-
-# if __name__ == '__main__':
-#     querystring = dict(location_id="293984", restaurant_tagcategory="10591", restaurant_tagcategory_standalone="10591",
-#                        currency="USD", lunit="km", limit="30", open_now="false", lang="en_US")
-#     response = requests.request("GET", API_RESTS_URL, headers=HEADERS_LOCATION, params=querystring)
-#     data = response.json()['data']
-#     for k in data:
-#         print(k)
-#     a = RestaurantFromAPI(data[4], 293984)
-#     print('city record')
-#     print(get_city_data_API('tel aviv'))
-#     print('rest record')
-#     print(a.get_rest_for_db())
-#     print('cuisine record')
-#     print(a.get_cuisines())
-#     print('review record')
-#     print(a.get_reviews())
-#     print('award record')
-#     print(a.get_awards())
+        try:
+            city_dict = get_city_data_API(city)
+            update_cities_table(city_dict)
+            location_id = city_dict['location_id']
+            rests_list = get_rest_list_API(location_id, num_rests)
+            for rest_dict in rests_list:
+                if 'ad_position' not in rest_dict.keys():
+                    rest_obj = RestaurantFromAPI(rest_dict, location_id)
+                    api_update_restaurant_db(rest_obj)
+        except ConnectionError:
+            print(
+                'One of your API connections  failed - please check your keys and URLs - For more info check the logs')
+        except IOError as err:
+            print(err)
+        except pymysql.err.OperationalError:
+            err = 'Connection to MySQL server failed, please check your credentials'
+            print(err)
+            logging.error(err)

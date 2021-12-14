@@ -1,4 +1,6 @@
 import re
+import pymysql.err
+import logging
 from update_db import TableUpdate
 from datetime import datetime
 from config import *
@@ -86,38 +88,16 @@ class RestaurantSoup:
         comments = self.soup.findAll('div', class_="reviewSelector")
         reviews_list = []
         for comment in comments:
-            review_dict = {}
-            review_dict['review_title'] = comment.find('span', class_='noQuotes').text
-            review_dict['rev_id'] = comment.get('data-reviewid')
-            review_dict['review_text'] = comment.find('p', class_='partial_entry').text[:MAX_CHARS]
             date = comment.find('span', class_='ratingDate').get('title')
-            review_dict['date'] = datetime.strptime(date, '%B %d, %Y')
-            review_dict['user_name'] = comment.find('div', class_="info_text pointer_cursor").text
             rating = comment.find('div', class_="ui_column is-9").find('span')
-            review_dict['rate'] = int(int(rating['class'][1].split('_')[1]) / NUM_TO_DIVIDE_RATING)
+            review_dict = {'review_title': comment.find('span', class_='noQuotes').text,
+                           'rev_id': comment.get('data-reviewid'),
+                           'review_text': comment.find('p', class_='partial_entry').text[:MAX_CHARS],
+                           'date': datetime.strptime(date, '%B %d, %Y'),
+                           'user_name': comment.find('div', class_="info_text pointer_cursor").text,
+                           'rate': int(int(rating['class'][1].split('_')[1]) / NUM_TO_DIVIDE_RATING)}
             reviews_list.append(review_dict)
         return reviews_list
-
-
-def get_reviews_from_soup(soup):
-    """
-    @param soup: html text from tripadvisor website
-    @return: list of dictionaries with all reviews.  keys: rev_id, review_title, user_name, review_text, rate, date
-    """
-    comments = soup.findAll('div', class_="reviewSelector")
-    reviews_list = []
-    for comment in comments:
-        review_dict = {}
-        review_dict['review_title'] = comment.find('span', class_='noQuotes').text
-        review_dict['rev_id'] = comment.get('data-reviewid')
-        review_dict['review_text'] = comment.find('p', class_='partial_entry').text
-        date = comment.find('span', class_='ratingDate').get('title')
-        review_dict['date'] = datetime.strptime(date, '%B %d, %Y')
-        review_dict['user_name'] = comment.find('div', class_="info_text pointer_cursor").text
-        rating = comment.find('div', class_="ui_column is-9").find('span')
-        review_dict['rate'] = int(int(rating['class'][1].split('_')[1]) / NUM_TO_DIVIDE_RATING)
-        reviews_list.append(review_dict)
-    return reviews_list
 
 
 # Updating data of each restaurant in database:
@@ -130,7 +110,11 @@ def update_30_db(soups, city_name, city_id):
     @param city_id: location id of city
     """
     for soup in soups:
-        update_tables_in_db(soup, city_name, city_id)
+        try:
+            update_tables_in_db(soup, city_name, city_id)
+        except pymysql.err.OperationalError:
+            err = 'Connection to MySQL server failed, please check your credentials'
+            raise ConnectionError(err)
 
 
 def creating_restaurant_dict(rest, city_id):
@@ -162,8 +146,10 @@ def update_cities_table(city):
     Updating cities table in MySQL DB
     @param city: dictionary with city  data
     """
+
     cities_table = TableUpdate(name=CITIES_TAB, data=city)
     cities_table.insert_table()
+    logging.info(f'table: {CITIES_TAB} updated with city: {city["city_name"]}')
 
 
 def update_restaurants_table(rest_dict):
@@ -175,6 +161,10 @@ def update_restaurants_table(rest_dict):
     res_table = TableUpdate(name=RES_TAB, data=rest_dict)
     res_table.insert_table()
     res_id = res_table.get_last_res_id()
+    if res_id:
+        logging.info(f'table {RES_TAB} updated with rest: {rest_dict["res_name"]}')
+    else:
+        logging.info(f'rest {rest_dict["res_name"]} already exists in db')
     return res_id
 
 
@@ -189,6 +179,8 @@ def update_cuisines_table(cuis_list, res_id):
             data = dict(zip(CUISINES_COLS, [res_id, cuis]))
             cuis_table = TableUpdate(name=CUIS_TAB, data=data)
             cuis_table.insert_table()
+        if res_id:
+            logging.info(f'table: {CUIS_TAB} updated for rest {res_id}')
 
 
 def update_reviews_table(reviews, res_id):
@@ -202,6 +194,8 @@ def update_reviews_table(reviews, res_id):
             review.update({'res_id': res_id})
             rev_table = TableUpdate(name=REV_TAB, data=review)
             rev_table.insert_table()
+        if res_id:
+            logging.info(f'table: {REV_TAB} updated for rest {res_id}')
 
 
 def update_awards_table(awards, res_id):
@@ -215,6 +209,8 @@ def update_awards_table(awards, res_id):
             award.update({'res_id': res_id})
             awards_table = TableUpdate(name=AWARDS_TAB, data=award)
             awards_table.insert_table()
+        if res_id:
+            logging.info(f'table: {AWARDS_TAB} updated for rest {res_id}')
 
 
 def update_tables_in_db(soup, city_name, city_id):

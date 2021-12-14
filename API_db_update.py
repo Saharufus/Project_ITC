@@ -1,13 +1,5 @@
-from detailed_page_mining import update_cities_table, update_restaurants_table, \
+from detailed_page_mining import update_restaurants_table, \
     update_cuisines_table, update_reviews_table, update_awards_table
-
-
-def api_update_cities_db(city):
-    """
-    Gets city details as dictionary and updates cities table in database
-    @param city: city details as dictionary
-    """
-    update_cities_table(city)
 
 
 def api_update_restaurant_db(rest_obj):

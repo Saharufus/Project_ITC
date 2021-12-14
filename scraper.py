@@ -11,7 +11,8 @@ from webdriver_manager.chrome import ChromeDriverManager
 import logging
 import re
 
-logging.basicConfig(filename='Tripadvisor scraper log', level=logging.INFO, format='%(asctime)s - %(levelname)s: %(message)s', filemode='w')
+logging.basicConfig(filename='Tripadvisor scraper log', level=logging.INFO,
+                    format='%(asctime)s - %(levelname)s: %(message)s', filemode='w')
 
 
 def scrape_from_tripadvisor(city_name, pages, main_driver, threads=5):
@@ -29,9 +30,16 @@ def scrape_from_tripadvisor(city_name, pages, main_driver, threads=5):
         main_soup = BeautifulSoup(main_driver.page_source, 'html.parser')
         list_of_restaurants_urls = get_rest_url_list(main_soup)
         restaurant_soup_list = get_list_of_soups_main_page_url_tabs(list_of_restaurants_urls, main_driver, threads)
-        update_30_db(restaurant_soup_list, city_name, city_id)
-        main_url = next_page(main_soup)
-        logging.info(f'Finished scraping page number {page + 1}')
+        try:
+            update_30_db(restaurant_soup_list, city_name, city_id)
+            main_url = next_page(main_soup)
+            logging.info(f'Finished scraping page number {page + 1}')
+        except AttributeError:
+            err = f'City {city_name} request failed'
+            raise IOError(err)
+        except ConnectionError as err:
+            print(err)
+            logging.info(err)
 
 
 def scrape_list_of_cities(list_of_cities, pages, threads=5):
@@ -46,6 +54,10 @@ def scrape_list_of_cities(list_of_cities, pages, threads=5):
     s = Service(ChromeDriverManager().install())
     main_driver = webdriver.Chrome(service=s)
     for city in list_of_cities:
-        scrape_from_tripadvisor(city, pages, main_driver, threads)
-        logging.info(f'Finished scraping {city}\'s restaurants')
+        try:
+            scrape_from_tripadvisor(city, pages, main_driver, threads)
+            logging.info(f'Finished scraping {city}\'s restaurants')
+        except IOError as err:
+            print(err)
+            logging.error(err)
     main_driver.quit()

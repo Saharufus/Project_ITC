@@ -10,9 +10,7 @@ NUM_TO_DIVIDE_RATING = 10
 DIGIT = 0
 SEARCH_BOX = 1
 
-# define username and password based on local mysql configuration
-MYSQL_USERNAME = 'root'
-MYSQL_PASSWORD = 'baris'
+
 DB = 'restaurants'
 HOST = 'localhost'
 
@@ -63,3 +61,19 @@ AWARDS_COLS = ['res_id',
 CUIS_FROM_TUPLE = 0
 CITIES_FOR_SCRAPER = 2
 MAX_CHARS = 255
+
+#API Scraper
+
+NUM_OF_RESTS_PER_PAGE = 30
+CURRENCY = "USD"
+API_LOCATIONS_URL = "https://travel-advisor.p.rapidapi.com/locations/search"
+API_RESTS_URL = "https://travel-advisor.p.rapidapi.com/restaurants/list"
+API_REVIEWS_URL = "https://travel-advisor.p.rapidapi.com/restaurants/get-details"
+
+HEADERS_LOCATION = {
+    'x-rapidapi-host': "travel-advisor.p.rapidapi.com",
+    'x-rapidapi-key': "435e0ff623mshd229f4b452570bep1715b9jsn53b2f86dce36"
+    }
+
+MIN_REQ_STATUS_CODE = 200
+MAX_REQ_STATUS_CODE = 400
