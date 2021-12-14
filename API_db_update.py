@@ -1,20 +1,26 @@
-from scrapper_db_update import update_cities_table, update_restaurants_table, \
+from detailed_page_mining import update_cities_table, update_restaurants_table, \
     update_cuisines_table, update_reviews_table, update_awards_table
-from API_scraper import *
 
 #TODO: insert to main with api mining, with "scrape_city_API"
 #TODO: loop on cities list?? maybe add to scrape_cities_API(list_of_cities, num_rests) in API_SCRAPER
 
-def api_update_tables_in_db(city_name):
+def api_update_cities_db(city): # accept city dict
     """
-    Gets a soup object of a restaurant webpage from Tripadvisor and feed the db with mined data
-    :param city_name: name of the city
+    Gets city details as dictionary and updates cities table in database
+    @param city: city details as dictionary
     """
-    city_dict = get_city_data_API(city_name)  # creating dict to update cities table
-    update_cities_table(city_dict)  # updating cities table
+    update_cities_table(city)
 
-    api_rest_dict = {}  # TODO: from where??
-    rest = RestaurantFromAPI(api_rest_dict, city_dict['location_id'])  # creating RestaurantFromAPI object
+def api_update_restaurant_db(rest_obj): # accept city dict
+    """
+    Gets a RestaurantFromAPI object of a single restaurant webpage from Tripadvisor and feed the db with mined data
+    @param: rest_obj: RestaurantFromAPI object of a single restaurant
+    """
+    # city_dict = get_city_data_API(city_name)  # creating dict to update cities table
+    # update_cities_table(city_dict)  # updating cities table
+
+    # api_rest_dict = {}
+    rest = rest_obj
 
     rest_dict = rest.get_rest_for_db()
     res_id = update_restaurants_table(rest_dict)  # updating cities table + return res_id

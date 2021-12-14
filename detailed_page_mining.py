@@ -2,9 +2,11 @@ import re
 from update_db import TableUpdate
 import config
 from datetime import datetime
-from config import PRICING_RATE, CUISINE, CITY_RATE, REMOVE_HASH, NUM_TO_DIVIDE_RATING
+# from config import PRICING_RATE, CUISINE, CITY_RATE, REMOVE_HASH, NUM_TO_DIVIDE_RATING
+from config import *
 
 
+# Data mining of each restaurant: using RestaurantSoup object:
 class RestaurantSoup:
     def __init__(self, soup):
         self.soup = soup
@@ -99,44 +101,6 @@ class RestaurantSoup:
         return reviews_list
 
 
-def update_table_in_db(soup, city_name):
-    """
-    Gets a soup object of a restaurant webpage from Tripadvisor and feed the db with mined data
-    :param soup: soup object of restaurant webpage
-    :param city_name: name of the city
-    """
-    rest = RestaurantSoup(soup)
-    name = rest.get_name()
-    if name:
-        cuisine, price_rate = rest.get_cuisine_and_price()
-        details = [name,
-                   city_name,
-                   rest.get_rating(),
-                   rest.get_reviews_num(),
-                   price_rate,
-                   rest.get_city_rate(),
-                   rest.get_address(),
-                   rest.get_website(),
-                   rest.get_phone()]
-        rest_dict = dict(zip(config.RESTAURANTS_COLS, details))
-        res_table = TableUpdate(name='restaurants',
-                                data=rest_dict)
-        res_table.insert_table()
-        res_id = res_table.get_last_res_id()
-        if cuisine:
-            for cuis in cuisine:
-                data = dict(zip(config.CUISINES_COLS, [res_id, cuis]))
-                cuis_table = TableUpdate(name='cuisines',
-                                         data=data)
-                cuis_table.insert_table()
-
-        reviews = rest.get_reviews()
-        for review in reviews:
-            review.update({'res_id': res_id})
-            rev_table = TableUpdate(name='reviews', data=review)
-            rev_table.insert_table()
-
-
 def get_reviews_from_soup(soup):
     """
     @param soup: html text from tripadvisor website
@@ -158,12 +122,121 @@ def get_reviews_from_soup(soup):
     return reviews_list
 
 
-def update_30_db(soups, city_name):
+# Updating data of each restaurant in database:
+def update_30_db(soups, city_name, city_id):
     """
     The function accepts a list of soups (html text) of detailed restaurant pages
     and updates table with soups batch
     @param soups: list of BeautifulSoup objects (html text)
     @param city_name: name of the scraped city
+    @param city_id: location id of city
     """
     for soup in soups:
-        update_table_in_db(soup, city_name)
+        update_tables_in_db(soup, city_name, city_id)
+
+
+def creating_restaurant_dict(rest, city_id):
+    """
+    Creating dictionary of restaurant data to insert db
+    @param rest: Restaurants object from restaurant webpage
+    @param city_id: city id from db
+    @return: restaurant dictionary
+    """
+    name = rest.get_name()
+    rest_dict = {}
+    if name:
+        cuisine, price_rate = rest.get_cuisine_and_price()
+        details = [name,
+                   city_id,
+                   rest.get_rating(),
+                   rest.get_reviews_num(),
+                   price_rate,
+                   rest.get_city_rate(),
+                   rest.get_address(),
+                   rest.get_website(),
+                   rest.get_phone()]
+        rest_dict = dict(zip(config.RESTAURANTS_COLS, details))
+    return rest_dict
+
+
+def update_cities_table(city):
+    """
+    Updating cities table in MySQL DB
+    @param city: dictionary with city  data
+    """
+    cities_table = TableUpdate(name=CITIES_TAB, data=city)
+    cities_table.insert_table()
+
+
+def update_restaurants_table(rest_dict):
+    """
+    Updating restaurants table in MySQL DB
+    @param rest_dict: dictionary with restaurant data
+    @return: res_id - the restaurant id in db (feature in table)
+    """
+    res_table = TableUpdate(name=RES_TAB, data=rest_dict)
+    res_table.insert_table()
+    res_id = res_table.get_last_res_id()
+    return res_id
+
+
+def update_cuisines_table(cuis_list, res_id):
+    """
+    Updating cuisines table in MySQL DB
+    @param cuis_list: list of cuisine types for a restaurant
+    @param res_id: restaurant id from db
+    """
+    if cuis_list:
+        for cuis in cuis_list:
+            data = dict(zip(config.CUISINES_COLS, [res_id, cuis]))
+            cuis_table = TableUpdate(name=CUIS_TAB, data=data)
+            cuis_table.insert_table()
+
+
+def update_reviews_table(reviews, res_id):
+    """
+    Updating cuisines table in MySQL DB
+    @param reviews: list of reviews for a restaurant (list of dicts)
+    @param res_id: restaurant id from db
+    """
+    if reviews:
+        for review in reviews:
+            review.update({'res_id': res_id})
+            rev_table = TableUpdate(name=REV_TAB, data=review)
+            rev_table.insert_table()
+
+
+def update_awards_table(awards, res_id):
+    """
+    Updating cuisines table in MySQL DB
+    @param awards: list of awards dictionaries for a restaurant
+    @param res_id: restaurant id from db
+    """
+    if awards:
+        for award in awards:
+            award.update({'res_id': res_id})
+            awards_table = TableUpdate(name=AWARDS_TAB, data=award)
+            awards_table.insert_table()
+
+
+def update_tables_in_db(soup, city_name, city_id):
+    """
+    Gets a soup object of a restaurant webpage from Tripadvisor and feed the db with mined data
+    @param: soup: soup object of restaurant webpage
+    @param: city_name: name of the city
+    @param: city_id: location_id of city
+    """
+    rest = RestaurantSoup(soup)  # creating Restaurant object
+    rest_dict = creating_restaurant_dict(rest, city_id)  # creating dictionary with restaurant details
+
+    city_dict = dict(zip(CITIES_COLS[:CITIES_FOR_SCRAPER],
+                         [city_id, city_name]))  # creating city dict
+    update_cities_table(city_dict)  # updating cities table
+
+    res_id = update_restaurants_table(rest_dict)  # updating cities table + return res_id
+
+    cuisines = rest.get_cuisine_and_price()[CUIS_FROM_TUPLE]  # getting cuisines list
+    update_cuisines_table(cuisines, res_id)  # updating cuisines table
+
+    reviews = rest.get_reviews()  # getting reviews list (list of dicts)
+    update_reviews_table(reviews, res_id)  # updating reviews table

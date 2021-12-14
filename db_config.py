@@ -1,6 +1,6 @@
 # define username and password based on local mysql configuration
 MYSQL_USERNAME = 'root'
-MYSQL_PASSWORD = 'root'
+MYSQL_PASSWORD = 'baris'
 HOST = 'localhost'
 
 CITIES_COLS = ['location_id',
@@ -57,8 +57,8 @@ longitude float
 
 CREATE_RES = """CREATE TABLE IF NOT EXISTS restaurants (
     res_id int auto_increment primary key,
-    location_id int,
     res_name varchar(255),
+    location_id int,
     rating float,
     reviews_num int,
     price_rate varchar(50),
