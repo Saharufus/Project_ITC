@@ -10,9 +10,9 @@ logging.basicConfig(filename='Tripadvisor scraper log', level=logging.INFO,
 def open_n_rest_tabs(url_short_list, driver, empty_list):
     """
     Fills a list with soups of restaurants from sublist of urls
-    :param url_short_list: A sub list of the list of restaurants urls in one page
-    :param driver: A main driver to work on
-    :param empty_list: List to be filled with soups
+    @param url_short_list: A sub list of the list of restaurants urls in one page
+    @param driver: A main driver to work on
+    @param empty_list: List to be filled with soups
     """
     for url in url_short_list:
         driver.execute_script(f"window.open('{url}');")

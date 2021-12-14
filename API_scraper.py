@@ -8,6 +8,10 @@ from config import *
 
 
 class RestaurantFromAPI:
+    """
+    Class used to get relevant data for db update using Travel Advisor API - rests, cuisines, reviews, awards
+    """
+
     def __init__(self, rest_dict, location_id):
         self.rest_dict = rest_dict
         self._rest_id = rest_dict.get('location_id')
@@ -34,6 +38,9 @@ class RestaurantFromAPI:
         self.location_id = location_id
 
     def get_rest_for_db(self):
+        """
+        @return: dictionary of rest data in db required format
+        """
         details = [self.res_name,
                    self.location_id,
                    self.rating,
@@ -49,6 +56,9 @@ class RestaurantFromAPI:
         return dict(zip(RESTAURANTS_COLS, details))
 
     def get_awards(self):
+        """
+        @return: dictionary of Tripadvisor awards data in db required format per restaurant
+        """
         award_list = []
         for award in self.rest_dict.get('awards'):
             award_dict = {k: award[k] for k in ['award_type', 'year']}
@@ -56,6 +66,9 @@ class RestaurantFromAPI:
         return award_list
 
     def get_reviews(self):
+        """
+        @return: list of reviews dictionary in db required format per restaurant
+        """
         review_query = {"location_id": self._rest_id, "currency": CURRENCY, "lang": LANG}
         review_response = requests.request("GET", API_REVIEWS_URL, headers=HEADERS_LOCATION, params=review_query)
         if MIN_REQ_STATUS_CODE <= review_response.status_code < MAX_REQ_STATUS_CODE:
@@ -77,11 +90,20 @@ class RestaurantFromAPI:
         return reviews_list
 
     def get_cuisines(self):
+        """
+        @return:  list of cuisines per restaurant
+
+        """
         cuisines = [cuis.get('name') for cuis in self.rest_dict.get('cuisine')]
         return cuisines
 
 
 def get_city_data_API(city):
+    """
+    Retrieves city information from API
+    @param city: city name
+    @return: city_record - dictionary of city data
+    """
     querystring = {"query": city, "limit": '1', "currency": CURRENCY,
                    "sort": SORT_METHOD, "lang": LANG}
     response = requests.request("GET", API_LOCATIONS_URL, headers=HEADERS_LOCATION, params=querystring)
@@ -107,6 +129,11 @@ def get_city_data_API(city):
 
 
 def get_rest_list_API(location_id, num_pages):
+    """
+    @param location_id: unique tripadvisor identifier per city
+    @param num_pages: amount of pages to scan
+    @return: list of restaurant records
+    """
     rests_data = []
     for i in range(num_pages):
         querystring = dict(location_id=location_id, restaurant_tagcategory=RESTAURANT_TAGCATEGORY,
@@ -125,6 +152,11 @@ def get_rest_list_API(location_id, num_pages):
 
 
 def scrape_cities_API(list_of_cities, num_rests):
+    """
+    Creates restaurant object and update db
+    @param list_of_cities: list of cities to scrape from API
+    @param num_rests: amount of requested restaurants to retrieve
+    """
     for city in list_of_cities:
         try:
             city_dict = get_city_data_API(city)

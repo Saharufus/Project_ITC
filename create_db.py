@@ -7,6 +7,10 @@ logging.basicConfig(filename='Tripadvisor scraper log', level=logging.INFO,
 
 
 def create_db(queries=CREATE_DB_QUERIES_INIT):
+    """
+    creates database (if not exists)
+    @param queries: list of MySQL queries for restaurant database creation
+    """
     connection = pymysql.connect(host=HOST,
                                  user=MYSQL_USERNAME,
                                  password=MYSQL_PASSWORD,
