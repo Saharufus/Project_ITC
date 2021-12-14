@@ -12,8 +12,9 @@ API_REVIEWS_URL = "https://travel-advisor.p.rapidapi.com/restaurants/get-details
 
 HEADERS_LOCATION = {
     'x-rapidapi-host': "travel-advisor.p.rapidapi.com",
-    'x-rapidapi-key': "5b84a14590msh608c7683f1edf99p18663fjsn231d41778f7c"
-}
+    'x-rapidapi-key': "22e2cc2258msh626c96a4012b38cp167d25jsn10e6c06452bf"
+    }
+
 MIN_REQ_STATUS_CODE = 200
 MAX_REQ_STATUS_CODE = 400
 

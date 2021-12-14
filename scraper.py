@@ -29,7 +29,7 @@ def scrape_from_tripadvisor(city_name, pages, main_driver, threads=5):
         main_soup = BeautifulSoup(main_driver.page_source, 'html.parser')
         list_of_restaurants_urls = get_rest_url_list(main_soup)
         restaurant_soup_list = get_list_of_soups_main_page_url_tabs(list_of_restaurants_urls, main_driver, threads)
-        update_30_db(restaurant_soup_list, city_name)
+        update_30_db(restaurant_soup_list, city_name, city_id)
         main_url = next_page(main_soup)
         logging.info(f'Finished scraping page number {page + 1}')
 
