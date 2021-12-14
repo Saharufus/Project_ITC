@@ -1,8 +1,6 @@
 import re
 from update_db import TableUpdate
-import config
 from datetime import datetime
-# from config import PRICING_RATE, CUISINE, CITY_RATE, REMOVE_HASH, NUM_TO_DIVIDE_RATING
 from config import *
 
 
@@ -91,7 +89,7 @@ class RestaurantSoup:
             review_dict = {}
             review_dict['review_title'] = comment.find('span', class_='noQuotes').text
             review_dict['rev_id'] = comment.get('data-reviewid')
-            review_dict['review_text'] = comment.find('p', class_='partial_entry').text[:255]
+            review_dict['review_text'] = comment.find('p', class_='partial_entry').text[:MAX_CHARS]
             date = comment.find('span', class_='ratingDate').get('title')
             review_dict['date'] = datetime.strptime(date, '%B %d, %Y')
             review_dict['user_name'] = comment.find('div', class_="info_text pointer_cursor").text
@@ -155,7 +153,7 @@ def creating_restaurant_dict(rest, city_id):
                    rest.get_address(),
                    rest.get_website(),
                    rest.get_phone()]
-        rest_dict = dict(zip(config.RESTAURANTS_COLS, details))
+        rest_dict = dict(zip(RESTAURANTS_COLS, details))
     return rest_dict
 
 
@@ -188,7 +186,7 @@ def update_cuisines_table(cuis_list, res_id):
     """
     if cuis_list:
         for cuis in cuis_list:
-            data = dict(zip(config.CUISINES_COLS, [res_id, cuis]))
+            data = dict(zip(CUISINES_COLS, [res_id, cuis]))
             cuis_table = TableUpdate(name=CUIS_TAB, data=data)
             cuis_table.insert_table()
 
