@@ -6,9 +6,8 @@ from db_config import MYSQL_PASSWORD, HOST, MYSQL_USERNAME
 class TableUpdate:
     def __init__(self, name, data):
         """
-        name: table name (as the name in MySQL DB)
-        columns: list of columns name (equals in DB and the keys of the data dict)
-        data: data dictionary of restaurant details
+        @param name: table name (as the name in MySQL DB)
+        @param data: data dictionary of restaurant details
         """
         self.name = name
         self.columns = data.keys()
@@ -21,6 +20,9 @@ class TableUpdate:
         self._cursor = self._connection.cursor()
 
     def insert_table(self):
+        """
+        Inserts records of data to MySQL DB
+        """
         columns_sql = ','.join(self.columns)
         values = [self._data.get(col) for col in self.columns]
         values_place = (','.join(["%s" for i in range(len(self.columns))]))
@@ -31,4 +33,7 @@ class TableUpdate:
         self._connection.commit()
 
     def get_last_res_id(self):
+        """
+        Returns last restaurant ID from MySQL DB
+        """
         return self._cursor.lastrowid

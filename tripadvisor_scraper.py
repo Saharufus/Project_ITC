@@ -12,6 +12,9 @@ logging.basicConfig(filename='Tripadvisor scraper log', level=logging.INFO,
 
 
 def scrape_command():
+    """
+    Function for parsing user input and redirecting program
+    """
     start = time.time()
     the_parser = argparse.ArgumentParser(usage='Scrape Tripadvisor\'s restaurant info\n', allow_abbrev=False)
     the_parser.add_argument('--API',

@@ -8,6 +8,9 @@ from config import *
 
 # Data mining of each restaurant: using RestaurantSoup object:
 class RestaurantSoup:
+    """
+    Restaurant object initialized by rest page soup
+    """
     def __init__(self, soup):
         self.soup = soup
 
@@ -156,7 +159,7 @@ def update_restaurants_table(rest_dict):
     """
     Updating restaurants table in MySQL DB
     @param rest_dict: dictionary with restaurant data
-    @return: res_id - the restaurant id in db (feature in table)
+    @return: res_id - the restaurant id in db (feature in table) - 0 if rest exists in db
     """
     res_table = TableUpdate(name=RES_TAB, data=rest_dict)
     res_table.insert_table()
