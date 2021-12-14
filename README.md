@@ -1,6 +1,6 @@
 # Web Scraping Project
 ### First project from the ITC program
-Creators: Sahar G. | Bar I. | Omer C.  
+Creators:  Bar I. | Omer C. | Sahar G. 
 
 Main project purpose:  
 &emsp;Create an easy-to-read db of restaurants in chosen cities.  
@@ -30,4 +30,4 @@ Run ```tripadvisor_scraper.py -c "city_1" "city_2" etc -p #num#```
 - ```awards``` table
 - ```reviews``` table - API is limited to 3 reviews per restaurant, Web scraper limited to 10.
 
-![](WhatsApp Image 2021-12-14 at 21.45.05.jpeg)
+![](ERD.jpeg)
