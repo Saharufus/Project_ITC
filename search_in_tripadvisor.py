@@ -22,10 +22,7 @@ def get_city_rest_url(city_name, driver):
     time.sleep(2)
     html_from_page = driver.page_source
     soup = BeautifulSoup(html_from_page, 'html.parser')
-    try:
-        city_url = soup.find('a', class_="bPaPP w z _S _F Wc Wh Q B- _G", href=True)
-        city_url = config.MAIN_PAGE + city_url['href']
-        logging.info(f'Starting to scrape {city_name}\'s restaurants')
-        return city_url
-    except Exception:
-        logging.warning(f'City named {city_name} not found')
+    city_url = soup.find('a', class_="bPaPP w z _S _F Wc Wh Q B- _G", href=True)
+    city_url = config.MAIN_PAGE + city_url['href']
+    logging.info(f'Starting to scrape {city_name}\'s restaurants')
+    return city_url
